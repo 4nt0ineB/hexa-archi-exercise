@@ -1,14 +1,14 @@
-package lunatech.application.service;
+package lunatech.application.service.adapter;
 
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.vavr.control.Either;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lunatech.domain.Role;
-import lunatech.domain.Todo;
-import lunatech.domain.User;
+import lunatech.application.service.port.UserServicePort;
+import lunatech.domain.model.Role;
+import lunatech.domain.model.Todo;
+import lunatech.domain.model.User;
 import lunatech.domain.UserRepositoryPort;
-import lunatech.infra.persistence.InMemoryUserRepositoryAdapter;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +16,9 @@ import java.util.Optional;
 @ApplicationScoped
 @IfBuildProfile("dev")
 public class UserServiceAdapter implements UserServicePort {
+
+    @Inject
+    AuthServiceAdapter authService;
 
     private final UserRepositoryPort userRepository;
 
@@ -56,13 +59,28 @@ public class UserServiceAdapter implements UserServicePort {
     }
 
     @Override
-    public Either<String, Todo> addTodo(User user, Todo todo) {
-        return userRepository.addTodoToUser(user, todo);
+    public Either<String, Todo> addTodo(String origin, String target, Todo todo) {
+        return find(origin, target)
+                .flatMap(eitherUser -> {
+                    // Extract UserEntity
+                    return eitherUser
+                            .map(Either::<String, User>right)
+                            .orElse(Either.left("User not found"));
+                })
+                .flatMap(user -> {
+                    // Adding TodoEntity to UserEntity
+                    return userRepository.addTodoToUser(user, todo);
+                });
     }
 
+    /**
+     *
+     * @param origin username of the initiator of the action
+     * @param target username of the target of the action
+     * @return Either a string with an error message is the origin user unauthorized
+     * or an optional of the target user
+     */
     private Either<String, Optional<User>> findTarget(String origin, String target) {
-        System.out.println("origin: " + origin);
-        System.out.println("target: " + target);
         var originUser = userRepository.getByUsername(origin);
         if(origin.equals(target)) {
             return Either.right(originUser);

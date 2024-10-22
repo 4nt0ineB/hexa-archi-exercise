@@ -3,8 +3,8 @@ package lunatech.infra.persistence;
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.vavr.control.Either;
 import jakarta.inject.Singleton;
-import lunatech.domain.Todo;
-import lunatech.domain.User;
+import lunatech.domain.model.Todo;
+import lunatech.domain.model.User;
 import lunatech.domain.UserRepositoryPort;
 
 import java.util.Optional;

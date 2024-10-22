@@ -1,4 +1,4 @@
-package lunatech.domain;
+package lunatech.domain.model;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,9 +3,10 @@ package lunatech.infra.persistence;
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.vavr.control.Either;
 import jakarta.enterprise.context.ApplicationScoped;
-import lunatech.domain.Todo;
-import lunatech.domain.User;
+import lunatech.domain.model.Todo;
+import lunatech.domain.model.User;
 import lunatech.domain.UserRepositoryPort;
+import org.jboss.logging.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @ApplicationScoped
 @IfBuildProfile("dev")
 public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
+
+    private static final Logger logger = Logger.getLogger(InMemoryUserRepositoryAdapter.class);
 
     private final Map<String, User> users = new HashMap<>();
 
@@ -36,7 +39,6 @@ public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public Either<String, Todo> addTodoToUser(User user, Todo todo) {
-        System.out.println("user2: " + user);
         return Optional.ofNullable(users.get(user.username())).map(u -> u.todos().stream()
                 .filter(t -> t.equals(todo))
                 .findFirst()

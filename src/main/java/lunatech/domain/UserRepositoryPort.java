@@ -1,6 +1,8 @@
 package lunatech.domain;
 
 import io.vavr.control.Either;
+import lunatech.domain.model.Todo;
+import lunatech.domain.model.User;
 
 import java.util.Optional;
 
