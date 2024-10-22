@@ -1,4 +1,4 @@
-package lunatech.before.security;
+package lunatech.domain;
 
 public enum Role {
     ADMIN,
