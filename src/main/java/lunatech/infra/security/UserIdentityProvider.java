@@ -10,7 +10,9 @@ import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lunatech.application.service.AuthService;
+import lunatech.application.service.port.AuthServicePort;
+
+import java.util.Optional;
 
 
 // https://quarkus.io/guides/security-basic-authentication-howto
@@ -20,7 +22,7 @@ import lunatech.application.service.AuthService;
 public class UserIdentityProvider implements IdentityProvider<UsernamePasswordAuthenticationRequest> {
 
     @Inject
-    AuthService authService;
+    AuthServicePort authService;
 
     @Override
     public Class<UsernamePasswordAuthenticationRequest> getRequestType() {
@@ -32,14 +34,14 @@ public class UserIdentityProvider implements IdentityProvider<UsernamePasswordAu
             UsernamePasswordAuthenticationRequest request,
             AuthenticationRequestContext context) {
         System.out.println("UserIdentityProvider.authenticate request: " + request.getUsername());
-        
+        // authenticate returns Optional<UserInfo>
         return authService.authenticate(request.getUsername(), String.valueOf(request.getPassword().getPassword()))
-                    .map(user -> Uni.createFrom().item((SecurityIdentity) QuarkusSecurityIdentity.builder()
-                                .setPrincipal(new QuarkusPrincipal(request.getUsername()))
-                                .addCredential(request.getPassword())
-                                .setAnonymous(false)
-                                .addRole(user.role().toString())
-                                .build()))
-                    .orElseThrow(() -> new AuthenticationFailedException("Couldn't authenticate"));
+                .map(userInfo -> Uni.createFrom().item((SecurityIdentity) QuarkusSecurityIdentity.builder()
+                        .setPrincipal(new QuarkusPrincipal(userInfo.username()))
+                        .addCredential(request.getPassword())
+                        .setAnonymous(false)
+                        .addRole(userInfo.role().name())
+                        .build()))
+                .orElseThrow(() -> new AuthenticationFailedException("Couldn't authenticate"));
     }
 }
