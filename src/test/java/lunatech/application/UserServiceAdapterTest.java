@@ -1,10 +1,10 @@
 package lunatech.application;
 
 import io.vavr.control.Either;
-import lunatech.application.service.UserServiceAdapter;
-import lunatech.domain.Role;
-import lunatech.domain.Todo;
-import lunatech.domain.User;
+import lunatech.application.service.adapter.UserServiceAdapter;
+import lunatech.domain.model.Role;
+import lunatech.domain.model.Todo;
+import lunatech.domain.model.User;
 import lunatech.domain.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -87,9 +87,11 @@ class UserServiceAdapterTest {
         User user = new User("Antoine", "pwd2", Role.REGULAR);
         Todo todo = new Todo(1L, "do the shopping", "", List.of("home"), false);
         when(userRepository.addTodoToUser(user, todo)).thenReturn(Either.right(todo));
+        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(user));
         // When
-        var result = userServiceAdapter.addTodo(user, todo);
+        Either<String, Todo> result = userServiceAdapter.addTodo("Antoine", "Antoine", todo);
         // Then
+        System.out.println("result: " + result);
         assertThat(result.get(), is(todo));
     }
 }

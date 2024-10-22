@@ -5,9 +5,10 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
-import lunatech.domain.Role;
-import lunatech.domain.User;
-import lunatech.infra.persistence.InMemoryUserRepositoryAdapter;
+import lunatech.domain.model.Role;
+import lunatech.domain.model.Todo;
+import lunatech.domain.model.User;
+import lunatech.domain.UserRepositoryPort;
 import org.jboss.logging.Logger;
 
 import java.util.List;
@@ -21,41 +22,18 @@ import java.util.List;
 public class Startup {
     private static final Logger logger = Logger.getLogger(Startup.class);
 
-    private final List<User> users = List.of(
-            new User("Nicolas", "pwd", Role.ADMIN),
-            new User("Ewen", "pwd", Role.REGULAR),
-            new User("Sebastien", "pwd", Role.REGULAR)
-    );
-
     @Inject
-    InMemoryUserRepositoryAdapter userRepository;
+    UserRepositoryPort userRepository;
 
     @Transactional
     public void loadFixtures(@Observes StartupEvent evt) {
         logger.info("Executing fixtures startup operation");
+        var users = List.of(
+                new User("Nicolas", "pwd", Role.ADMIN),
+                new User("Ewen", "pwd", Role.REGULAR),
+                new User("Sebastien", "pwd", Role.REGULAR)
+        );
+        users.get(1).addTodoToUser(new Todo("Run", List.of("sport", "health")));
         users.forEach(u -> userRepository.save(u));
-//        userRepository.getByUsername("Nicolas").ifPresent(user -> {
-//            System.out.println("user: " + user);
-//        });
     }
 }
-
-/*
-@Singleton
-public class Startup {
-    private static final Logger logger = Logger.getLogger(Startup.class);
-
-    private final List<UserEntity> users = List.of(
-            new UserEntity("Nicolas", "pwd", Role.ADMIN, new ArrayList<>()),
-            new UserEntity("Ewen", "pwd", Role.REGULAR, new ArrayList<>()),
-            new UserEntity("Sebastien", "pwd", Role.REGULAR, new ArrayList<>())
-    );
-
-    @Transactional
-    public void loadFixtures(@Observes StartupEvent evt) {
-        logger.info("Executing fixtures startup operation");
-
-        UserEntity.deleteAll();
-        users.forEach(u -> u.persist());
-    }
-}*/
