@@ -34,7 +34,7 @@ public class Startup {
                 new User("Ewen", "pwd", Role.REGULAR),
                 new User("Sebastien", "pwd", Role.REGULAR)
         );
-        users.get(1).addTodoToUser(new Todo(String.valueOf(ThreadLocalRandom.current().nextLong()), "Run", List.of("sport", "health")));
+        users.get(1).addTodo(new Todo(String.valueOf(ThreadLocalRandom.current().nextLong()), "Run", List.of("sport", "health")));
         users.forEach(u -> userRepository.save(u));
     }
 }

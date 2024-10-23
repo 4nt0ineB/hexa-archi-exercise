@@ -2,6 +2,7 @@ package lunatech.domain.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class User {
     private final String username;
@@ -31,8 +32,8 @@ public class User {
         return todos;
     }
 
-    public User addTodoToUser(Todo todo) {
+    public void addTodo(Todo todo) {
         todos.add(todo);
-        return this;
     }
+
 }

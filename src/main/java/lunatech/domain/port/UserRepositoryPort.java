@@ -11,4 +11,6 @@ public interface UserRepositoryPort {
     Optional<User> save(User user);
     void delete(User user);
     Either<String, Todo> addTodoToUser(User user, Todo todo);
+    Either<String, Todo> updateTodo(User user, Todo todo);
+    Either<String, String> deleteTodo(User user, String id);
 }

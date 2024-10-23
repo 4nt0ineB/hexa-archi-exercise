@@ -2,6 +2,7 @@ package lunatech.application;
 
 import io.vavr.control.Either;
 import lunatech.domain.adapter.UserServiceAdapter;
+import lunatech.domain.dto.UserInfo;
 import lunatech.domain.model.Role;
 import lunatech.domain.model.Todo;
 import lunatech.domain.model.User;
@@ -36,9 +37,9 @@ class UserServiceAdapterTest {
         User originUser = new User("Antoine", "pwd", Role.REGULAR);
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(originUser));
         // When
-        Either<String, Optional<User>> result = userServiceAdapter.find("Antoine", "Antoine");
+        Either<String, UserInfo> result = userServiceAdapter.find("Antoine", "Antoine");
         // Then
-        assertThat(result.get(), is(Optional.of(originUser)));
+        assertThat(result.get(), is(originUser));
     }
 
     @Test
@@ -49,7 +50,7 @@ class UserServiceAdapterTest {
         when(userRepository.getByUsername("Seb")).thenReturn(Optional.of(originUser));
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(targetUser));
         // When
-        Either<String, Optional<User>> result = userServiceAdapter.find("Seb", "Antoine");
+        Either<String, UserInfo> result = userServiceAdapter.find("Seb", "Antoine");
         // Then
         assertThat(result.get(), is(Optional.of(targetUser)));
     }
@@ -62,7 +63,7 @@ class UserServiceAdapterTest {
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(originUser));
         when(userRepository.getByUsername("Ewen")).thenReturn(Optional.of(targetUser));
         // When
-        Either<String, Optional<User>> result = userServiceAdapter.find("Antoine", "Ewen");
+        Either<String, UserInfo> result = userServiceAdapter.find("Antoine", "Ewen");
         // Then
         assertThat(result.isLeft(), is(true));
         assertThat(result.getLeft(), is("User not authorized"));
@@ -74,11 +75,11 @@ class UserServiceAdapterTest {
         User originUser = new User("Seb", "pwd1", Role.ADMIN);
         User targetUser = new User("Antoine", "pwd2", Role.REGULAR);
         var todo = new Todo("1", "Do exercises", "", List.of("work"), false);
-        targetUser.addTodoToUser(todo);
+        targetUser.addTodo(todo);
         when(userRepository.getByUsername("Seb")).thenReturn(Optional.of(originUser));
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(targetUser));
         // When
-        Either<String, Optional<List<Todo>>> result = userServiceAdapter.findTodos("Seb", "Antoine");
+        Either<String, List<Todo>> result = userServiceAdapter.findTodos("Seb", "Antoine");
         // Then
         assertThat(result.get(), is(Optional.of(targetUser.todos())));
     }

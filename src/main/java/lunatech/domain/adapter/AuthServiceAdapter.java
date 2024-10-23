@@ -1,5 +1,6 @@
 package lunatech.domain.adapter;
 
+import jakarta.transaction.Transactional;
 import lunatech.domain.dto.UserInfo;
 import lunatech.domain.port.AuthServicePort;
 import lunatech.domain.port.UserRepositoryPort;
@@ -20,5 +21,5 @@ public class AuthServiceAdapter implements AuthServicePort {
                 .filter(user -> user.password().equals(password))
                 .map(user -> new UserInfo(user.username(), user.role()));
     }
-
+    
 }

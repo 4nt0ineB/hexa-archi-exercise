@@ -25,4 +25,8 @@ public record Todo(String id, String title, String description, List<String> tag
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public Todo withId(String id) {
+        return new Todo(id, title, description, tags, done);
+    }
 }
