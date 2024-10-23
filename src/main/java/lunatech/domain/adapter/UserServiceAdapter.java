@@ -22,12 +22,12 @@ public class UserServiceAdapter implements UserServicePort {
 
     @Override
     public Either<String, UserInfo> find(String origin, String target) {
-        return findTarget(origin, target).map(user -> new UserInfo(user.username(), user.role()));
+        return findAuthorizedTarget(origin, target).map(user -> new UserInfo(user.username(), user.role()));
     }
 
     @Override
     public Either<String, List<Todo>> findTodos(String origin, String target) {
-        return findTarget(origin, target).map(User::todos);
+        return findAuthorizedTarget(origin, target).map(User::todos);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class UserServiceAdapter implements UserServicePort {
 
     @Override
     public Either<String, Todo> findTodoById(String origin, String username, UUID id) {
-        return findTarget(origin, username)
+        return findAuthorizedTarget(origin, username)
                 .flatMap(user -> user.todos().stream()
                         .filter(todo -> todo.id().equals(id))
                         .findFirst()
@@ -51,50 +51,52 @@ public class UserServiceAdapter implements UserServicePort {
 
     @Override
     public Either<String, Todo> updateTodo(String origin, String target, Todo todo) {
-        return findTarget(origin, target)
+        return findAuthorizedTarget(origin, target)
                 .flatMap(user -> userRepository.updateTodo(user, todo));
     }
 
     @Override
     public Either<String, Todo> addTodo(String origin, String target, Todo todo) {
-        return findTarget(origin, target)
-                .flatMap(user -> {
-                    var id = UUID.randomUUID();
-                    return userRepository.addTodoToUser(user, todo.withId(id));
-                });
+        return findAuthorizedTarget(origin, target)
+                .flatMap(user -> userRepository.addTodoToUser(user, todo.withId(UUID.randomUUID())));
     }
 
     @Override
-    public Either<String, String> deleteTodo(String origin, String target, String id) {
-        return findTarget(origin, target)
+    public Either<String, UUID> deleteTodo(String origin, String target, UUID id) {
+        return findAuthorizedTarget(origin, target)
                 .flatMap(user -> userRepository.deleteTodo(user, id));
     }
 
     /**
+     * Retrieves the target user and checks if the origin user is authorized to perform actions.
      *
-     * Retrieve the target user.
-     * Checks authorization of the user performing the action on the target user
-     *
-     * @param origin username of the initiator of the action
-     * @param target username of the target of the action
-     * @return Either a string with an error message is the origin user unauthorized
-     * or an optional of the target user
+     * @param origin the username of the initiator of the action
+     * @param target the username of the target user
+     * @return Either an error message or the target User
      */
-    private Either<String, User> findTarget(String origin, String target) {
+    private Either<String, User> findAuthorizedTarget(String origin, String target) {
         return userRepository.getByUsername(origin)
-                .map(originUser -> {
-                    if (origin.equals(target)) {
-                        return Either.<String,User>right(originUser);
-                    }
-                    // Only admin can perform actions on other users
-                    if(!originUser.role().equals(Role.ADMIN)) {
-                        return Either.<String,User>left("User not authorized");
-                    }
-                    return userRepository.getByUsername(target)
-                            .map(Either::<String, User>right)
-                            .orElse(Either.left(target + " user not found"));
-                })
+                .map(originUser -> checkAuthorizationAndFindTarget(originUser, target))
                 .orElse(Either.left(origin + " not found"));
+    }
+
+    /**
+     * Checks if the origin user is authorized to access or modify the target user.
+     *
+     * @param originUser the user performing the action
+     * @param target the target username
+     * @return Either the target user or an error message
+     */
+    private Either<String, User> checkAuthorizationAndFindTarget(User originUser, String target) {
+        if (originUser.username().equals(target)) {
+            return Either.right(originUser);
+        }
+        if (!originUser.role().equals(Role.ADMIN)) {
+            return Either.left("Unauthorized access to user '" + target + "'");
+        }
+        return userRepository.getByUsername(target)
+                .map(Either::<String, User>right)
+                .orElse(Either.left(target + " not found"));
     }
 
 }
