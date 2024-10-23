@@ -5,7 +5,7 @@ import io.vavr.control.Either;
 import jakarta.enterprise.context.ApplicationScoped;
 import lunatech.domain.model.Todo;
 import lunatech.domain.model.User;
-import lunatech.domain.UserRepositoryPort;
+import lunatech.domain.port.UserRepositoryPort;
 import org.jboss.logging.Logger;
 
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
                 .map(t -> Either.<String,Todo>left("Todo already exists"))
                 .orElseGet(() -> {
                     // ugly
-                    var newtodo = new Todo(ThreadLocalRandom.current().nextLong(), todo.title(), todo.description(), todo.tags(), todo.done());
+                    var newtodo = new Todo(String.valueOf(ThreadLocalRandom.current().nextLong()), todo.title(), todo.description(), todo.tags(), todo.done());
                     user.todos().add(newtodo);
                     return Either.right(newtodo);
                 })).orElse(Either.left("User not found"));

@@ -10,9 +10,7 @@ import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lunatech.application.service.port.AuthServicePort;
-
-import java.util.Optional;
+import lunatech.domain.port.AuthServicePort;
 
 
 // https://quarkus.io/guides/security-basic-authentication-howto
@@ -33,8 +31,6 @@ public class UserIdentityProvider implements IdentityProvider<UsernamePasswordAu
     public Uni<SecurityIdentity> authenticate(
             UsernamePasswordAuthenticationRequest request,
             AuthenticationRequestContext context) {
-        System.out.println("UserIdentityProvider.authenticate request: " + request.getUsername());
-        // authenticate returns Optional<UserInfo>
         return authService.authenticate(request.getUsername(), String.valueOf(request.getPassword().getPassword()))
                 .map(userInfo -> Uni.createFrom().item((SecurityIdentity) QuarkusSecurityIdentity.builder()
                         .setPrincipal(new QuarkusPrincipal(userInfo.username()))

@@ -1,11 +1,12 @@
 package lunatech.application;
 
 import io.vavr.control.Either;
-import lunatech.application.service.adapter.UserServiceAdapter;
+import lunatech.domain.adapter.UserServiceAdapter;
 import lunatech.domain.model.Role;
 import lunatech.domain.model.Todo;
 import lunatech.domain.model.User;
-import lunatech.domain.UserRepositoryPort;
+import lunatech.domain.port.AuthServicePort;
+import lunatech.domain.port.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,7 @@ class UserServiceAdapterTest {
 
     private UserRepositoryPort userRepository;
     private UserServiceAdapter userServiceAdapter;
+    private AuthServicePort authService;
 
     @BeforeEach
     void setup() {
@@ -71,7 +73,7 @@ class UserServiceAdapterTest {
         // Given
         User originUser = new User("Seb", "pwd1", Role.ADMIN);
         User targetUser = new User("Antoine", "pwd2", Role.REGULAR);
-        var todo = new Todo(1L, "Do exercises", "", List.of("work"), false);
+        var todo = new Todo("1", "Do exercises", "", List.of("work"), false);
         targetUser.addTodoToUser(todo);
         when(userRepository.getByUsername("Seb")).thenReturn(Optional.of(originUser));
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(targetUser));
@@ -85,7 +87,7 @@ class UserServiceAdapterTest {
     void testAddTodoToUser() {
         // Given
         User user = new User("Antoine", "pwd2", Role.REGULAR);
-        Todo todo = new Todo(1L, "do the shopping", "", List.of("home"), false);
+        Todo todo = new Todo("1", "do the shopping", "", List.of("home"), false);
         when(userRepository.addTodoToUser(user, todo)).thenReturn(Either.right(todo));
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(user));
         // When

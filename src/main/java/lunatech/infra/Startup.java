@@ -1,4 +1,4 @@
-package lunatech;
+package lunatech.infra;
 
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
@@ -8,10 +8,11 @@ import jakarta.transaction.Transactional;
 import lunatech.domain.model.Role;
 import lunatech.domain.model.Todo;
 import lunatech.domain.model.User;
-import lunatech.domain.UserRepositoryPort;
+import lunatech.domain.port.UserRepositoryPort;
 import org.jboss.logging.Logger;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 /**
@@ -33,7 +34,7 @@ public class Startup {
                 new User("Ewen", "pwd", Role.REGULAR),
                 new User("Sebastien", "pwd", Role.REGULAR)
         );
-        users.get(1).addTodoToUser(new Todo("Run", List.of("sport", "health")));
+        users.get(1).addTodoToUser(new Todo(String.valueOf(ThreadLocalRandom.current().nextLong()), "Run", List.of("sport", "health")));
         users.forEach(u -> userRepository.save(u));
     }
 }

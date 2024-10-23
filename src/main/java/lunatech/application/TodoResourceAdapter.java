@@ -1,4 +1,4 @@
-package lunatech.infra.api;
+package lunatech.application;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -6,7 +6,7 @@ import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lunatech.application.service.port.UserServicePort;
+import lunatech.domain.port.UserServicePort;
 import lunatech.domain.model.Role;
 import lunatech.domain.model.Todo;
 import lunatech.infra.security.SecurityService;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TodoResourceAdapter {
 
-    private static final Logger logger = Logger.getLogger(lunatech.infra.api.TodoResourceAdapter.class);
+    private static final Logger logger = Logger.getLogger(TodoResourceAdapter.class);
 
     @Inject
     Validator validator;

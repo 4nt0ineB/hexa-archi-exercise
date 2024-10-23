@@ -1,4 +1,4 @@
-package lunatech.domain;
+package lunatech.domain.port;
 
 import io.vavr.control.Either;
 import lunatech.domain.model.Todo;

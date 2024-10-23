@@ -1,28 +1,19 @@
-package lunatech.application.service.adapter;
+package lunatech.domain.adapter;
 
-import io.quarkus.arc.profile.IfBuildProfile;
 import io.vavr.control.Either;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import lunatech.application.service.port.UserServicePort;
 import lunatech.domain.model.Role;
 import lunatech.domain.model.Todo;
 import lunatech.domain.model.User;
-import lunatech.domain.UserRepositoryPort;
+import lunatech.domain.port.UserRepositoryPort;
+import lunatech.domain.port.UserServicePort;
 
 import java.util.List;
 import java.util.Optional;
 
-@ApplicationScoped
-@IfBuildProfile("dev")
 public class UserServiceAdapter implements UserServicePort {
-
-    @Inject
-    AuthServiceAdapter authService;
 
     private final UserRepositoryPort userRepository;
 
-    @Inject
     public UserServiceAdapter(UserRepositoryPort userRepository) {
         this.userRepository = userRepository;
     }

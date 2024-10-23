@@ -1,7 +1,6 @@
-package lunatech.application.service.port;
+package lunatech.domain.port;
 
-import io.vavr.control.Either;
-import lunatech.application.service.dto.UserInfo;
+import lunatech.domain.dto.UserInfo;
 
 import java.util.Optional;
 

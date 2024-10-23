@@ -1,4 +1,4 @@
-package lunatech.application.service.dto;
+package lunatech.domain.dto;
 
 import lunatech.domain.model.Role;
 
