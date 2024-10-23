@@ -12,6 +12,7 @@ import lunatech.infra.persistence.mongo.entities.UserEntity;
 import lunatech.infra.persistence.mongo.entities.UserMapper;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Singleton
 @IfBuildProfile("dev")
@@ -32,11 +33,6 @@ public class MongoUserRepositoryAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public void delete(User user) {
-        UserEntity.delete("username", user.username());
-    }
-
-    @Override
     public Either<String, Todo> addTodoToUser(User user, Todo todo) {
         return UserEntity.<UserEntity>find("username", user.username())
                 .firstResultOptional()
@@ -54,7 +50,7 @@ public class MongoUserRepositoryAdapter implements UserRepositoryPort {
                 .firstResultOptional()
                 .map(userEntity -> {
                     var todoEntity = userEntity.todos.stream()
-                            .filter(t -> t.todoId.equals(todo.id()))
+                            .filter(t -> t.id.equals(todo.id().toString()))
                             .findFirst();
                     if(todoEntity.isEmpty()) {
                         return Either.<String, Todo>left("Todo not found");
@@ -72,21 +68,21 @@ public class MongoUserRepositoryAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public Either<String, String> deleteTodo(User user, String id) {
+    public Either<String, UUID> deleteTodo(User user, UUID id) {
         return UserEntity.<UserEntity>find("username", user.username())
                 .firstResultOptional()
                 .map(userEntity -> {
                     var todoEntity = userEntity.todos.stream()
-                            .filter(t -> t.todoId.equals(id))
+                            .filter(t -> t.id.equals(id.toString()))
                             .findFirst();
                     if(todoEntity.isEmpty()) {
-                        return Either.<String, String>left("Todo not found");
+                        return Either.<String, UUID>left("Todo not found");
                     }
                     todoEntity.ifPresent(t -> {
                         userEntity.todos.remove(t);
                     });
                     userEntity.persistOrUpdate();
-                    return Either.<String, String>right(id);
+                    return Either.<String, UUID>right(id);
                 })
                 .orElseGet(() -> Either.left("User not found"));
     }

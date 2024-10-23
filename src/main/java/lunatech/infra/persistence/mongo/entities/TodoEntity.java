@@ -11,8 +11,7 @@ import java.util.UUID;
 
 @MongoEntity(collection = "todos")
 public class TodoEntity {
-    @BsonId
-    public UUID todoId;
+    public String id;
     @NotNull
     @NotBlank
     public String title;

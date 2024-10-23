@@ -11,13 +11,12 @@ import org.jboss.logging.Logger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @ApplicationScoped
 @IfBuildProfile("test")
 public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
-
-    private static final Logger logger = Logger.getLogger(InMemoryUserRepositoryAdapter.class);
 
     private final Map<String, User> users = new HashMap<>();
 
@@ -30,11 +29,6 @@ public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
     public Optional<User> save(User user) {
         users.put(user.username(), user);
         return Optional.of(user);
-    }
-
-    @Override
-    public void delete(User user) {
-        users.remove(user.username());
     }
 
     @Override
@@ -51,11 +45,24 @@ public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public Either<String, Todo> updateTodo(User user, Todo todo) {
-        return null;
+        return users.get(user.username()).todos().stream()
+                .filter(t -> t.id().equals(todo.id()))
+                .findFirst()
+                .map(t -> {
+                    user.todos().remove(t);
+                    user.todos().add(todo);
+                    return Either.<String,Todo>right(todo);
+                }).orElseGet(() -> Either.left("Todo not found"));
     }
 
     @Override
-    public Either<String, String> deleteTodo(User user, String id) {
-        return null;
+    public Either<String, UUID> deleteTodo(User user, UUID id) {
+        return users.get(user.username()).todos().stream()
+                .filter(t -> t.id().equals(id))
+                .findFirst()
+                .map(t -> {
+                    user.todos().remove(t);
+                    return Either.<String,UUID>right(t.id());
+                }).orElseGet(() -> Either.left("Todo not found"));
     }
 }

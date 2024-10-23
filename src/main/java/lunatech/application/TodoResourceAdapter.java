@@ -100,7 +100,7 @@ public class TodoResourceAdapter {
     @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response delete(
             @QueryParam("user") Optional<String> userName,
-            @PathParam("id") String id
+            @PathParam("id") UUID id
     ) {
         var userTarget = userName.orElse(securityService.userName());
         return userService.deleteTodo(securityService.userName(), userTarget, id)

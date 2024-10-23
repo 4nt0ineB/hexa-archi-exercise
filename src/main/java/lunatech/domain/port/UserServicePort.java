@@ -17,5 +17,5 @@ public interface UserServicePort {
     Either<String, Todo> findTodoById(String origin, String username, UUID id);
     Either<String, Todo> updateTodo(String origin, String username, Todo todo);
     Either<String, Todo> addTodo(String origin, String target, Todo todo);
-    Either<String, String> deleteTodo(String origin, String target, String id);
+    Either<String, UUID> deleteTodo(String origin, String target, UUID id);
 }
