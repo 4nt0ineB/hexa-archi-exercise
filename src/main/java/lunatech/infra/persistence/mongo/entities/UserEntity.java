@@ -40,7 +40,7 @@ public class UserEntity extends PanacheMongoEntity {
      * @example List.empty<TodoEntity>
      */
     @NotNull(message = "Todos should be set")
-    public List<TodoEntity> todos;
+    public List<TodoEntity> todos = List.of();
 
     public UserEntity() {}
 

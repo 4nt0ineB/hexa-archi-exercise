@@ -13,6 +13,7 @@ import lunatech.infra.security.SecurityService;
 import org.jboss.logging.Logger;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Path("/api/todos")
@@ -40,9 +41,13 @@ public class TodoResourceAdapter {
             @QueryParam("user") Optional<String> userName
     ) {
         var userTarget =  userName.orElse(securityService.userName());
-        System.out.println("userTarget: " + userTarget);
 
-        var todos = userService.findTodos(securityService.userName(), userTarget);
+        var todos = tagsFilter
+                .map(tags -> {
+                    var tagList = Arrays.asList(tags.split(","));
+                    return userService.findTodosWithTags(securityService.userName(), userTarget, tagList);
+                })
+                .orElse(userService.findTodos(securityService.userName(), userTarget));
 
         return todos
                 .map(Response::ok)
@@ -56,11 +61,36 @@ public class TodoResourceAdapter {
             @QueryParam("user") Optional<String> userName,
             Todo todoToAdd
     ) {
-        var userTarget =  userName.orElse(securityService.userName());
+        var userTarget = userName.orElse(securityService.userName());
         return userService.addTodo(securityService.userName(), userTarget, todoToAdd)
                 .map(eitherTodo -> Response.created(URI.create(String.format("/api/todos/%s", eitherTodo.id()))).entity(eitherTodo))
                 .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
                 .build();
+    }
+
+    @PUT
+    @Path("/")
+    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
+    public Response updateTodo(
+            @QueryParam("user") Optional<String> userName,
+            Todo todoToUpdate
+    ) {
+        var userTarget = userName.orElse(securityService.userName());
+        return userService.updateTodo(securityService.userName(), userTarget, todoToUpdate)
+                .map(Response::ok)
+                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
+                .build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @RolesAllowed({Role.Names.ADMIN, Role.Names.REGULAR})
+    public Response delete(
+            @QueryParam("user") Optional<String> userName
+    ) {
+        var userTarget = userName.orElse(securityService.userName());
+
+        return Response.ok().build();
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @ApplicationScoped
-@IfBuildProfile("dev")
+@IfBuildProfile("test")
 public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
 
     private static final Logger logger = Logger.getLogger(InMemoryUserRepositoryAdapter.class);
@@ -44,10 +44,18 @@ public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
                 .findFirst()
                 .map(t -> Either.<String,Todo>left("Todo already exists"))
                 .orElseGet(() -> {
-                    // ugly
-                    var newtodo = new Todo(String.valueOf(ThreadLocalRandom.current().nextLong()), todo.title(), todo.description(), todo.tags(), todo.done());
-                    user.todos().add(newtodo);
-                    return Either.right(newtodo);
+                    user.todos().add(todo);
+                    return Either.right(todo);
                 })).orElse(Either.left("User not found"));
+    }
+
+    @Override
+    public Either<String, Todo> updateTodo(User user, Todo todo) {
+        return null;
+    }
+
+    @Override
+    public Either<String, String> deleteTodo(User user, String id) {
+        return null;
     }
 }
