@@ -24,7 +24,6 @@ class UserServiceAdapterTest {
 
     private UserRepositoryPort userRepository;
     private UserServiceAdapter userServiceAdapter;
-    private AuthServicePort authService;
 
     @BeforeEach
     void setup() {

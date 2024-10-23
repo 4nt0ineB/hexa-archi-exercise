@@ -10,7 +10,7 @@ import lunatech.domain.port.UserRepositoryPort;
 import lunatech.domain.port.UserServicePort;
 
 @ApplicationScoped
-public class BeanProducer {
+public class BeanConfiguration {
 
     @Inject
     UserRepositoryPort orderRepository;

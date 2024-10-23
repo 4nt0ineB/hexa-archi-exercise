@@ -18,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class is executed everytime that we launch the application. We use it to load fixtures.
+ *
  */
 
 @Singleton
