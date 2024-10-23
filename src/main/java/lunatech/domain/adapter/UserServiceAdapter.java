@@ -58,7 +58,7 @@ public class UserServiceAdapter implements UserServicePort {
     @Override
     public Either<String, Todo> addTodo(String origin, String target, Todo todo) {
         return findAuthorizedTarget(origin, target)
-                .flatMap(user -> userRepository.addTodoToUser(user, todo.withId(UUID.randomUUID())));
+                .flatMap(user -> userRepository.addTodoToUser(user, todo));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class UserServiceAdapter implements UserServicePort {
      */
     private Either<String, User> findAuthorizedTarget(String origin, String target) {
         return userRepository.getByUsername(origin)
-                .map(originUser -> checkAuthorizationAndFindTarget(originUser, target))
+                .map(originUser -> checkPermissionAndFindTarget(originUser, target))
                 .orElse(Either.left(origin + " not found"));
     }
 
@@ -87,7 +87,7 @@ public class UserServiceAdapter implements UserServicePort {
      * @param target the target username
      * @return Either the target user or an error message
      */
-    private Either<String, User> checkAuthorizationAndFindTarget(User originUser, String target) {
+    private Either<String, User> checkPermissionAndFindTarget(User originUser, String target) {
         if (originUser.username().equals(target)) {
             return Either.right(originUser);
         }

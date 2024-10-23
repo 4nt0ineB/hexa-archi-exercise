@@ -6,6 +6,10 @@ import java.util.UUID;
 
 public record Todo(UUID id, String title, String description, List<String> tags, boolean done) {
 
+    public Todo(String title, String description, List<String> tags) {
+        this(UUID.randomUUID(), title, description, tags, false);
+    }
+
     public Todo(UUID id, String title, List<String> tags) {
         this(id, title, "", tags, false);
     }

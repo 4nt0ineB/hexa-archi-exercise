@@ -1,4 +1,4 @@
-package lunatech.application;
+package lunatech.domain;
 
 import io.vavr.control.Either;
 import lunatech.domain.adapter.UserServiceAdapter;
@@ -6,7 +6,6 @@ import lunatech.domain.dto.UserInfo;
 import lunatech.domain.model.Role;
 import lunatech.domain.model.Todo;
 import lunatech.domain.model.User;
-import lunatech.domain.port.AuthServicePort;
 import lunatech.domain.port.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,7 @@ class UserServiceAdapterTest {
         // When
         Either<String, UserInfo> result = userServiceAdapter.find("Antoine", "Antoine");
         // Then
-        assertThat(result.get(), is(originUser));
+        assertThat(result.get(), is(new UserInfo("Antoine", Role.REGULAR)));
     }
 
     @Test
@@ -52,11 +51,11 @@ class UserServiceAdapterTest {
         // When
         Either<String, UserInfo> result = userServiceAdapter.find("Seb", "Antoine");
         // Then
-        assertThat(result.get(), is(Optional.of(targetUser)));
+        assertThat(result.get(), is(new UserInfo("Antoine", Role.REGULAR)));
     }
 
     @Test
-    void testFindAnotherUserAsRegularUserUnauthorized() {
+    void testFindAnotherUserAsRegularUser() {
         // Given
         User originUser = new User("Antoine", "pwd2", Role.REGULAR);
         User targetUser = new User("Ewen", "pwd3", Role.REGULAR);
@@ -66,11 +65,10 @@ class UserServiceAdapterTest {
         Either<String, UserInfo> result = userServiceAdapter.find("Antoine", "Ewen");
         // Then
         assertThat(result.isLeft(), is(true));
-        assertThat(result.getLeft(), is("User not authorized"));
     }
 
     @Test
-    void testFindTodosForAdmin() {
+    void testFindTodosAsAdmin() {
         // Given
         User originUser = new User("Seb", "pwd1", Role.ADMIN);
         User targetUser = new User("Antoine", "pwd2", Role.REGULAR);
@@ -81,7 +79,7 @@ class UserServiceAdapterTest {
         // When
         Either<String, List<Todo>> result = userServiceAdapter.findTodos("Seb", "Antoine");
         // Then
-        assertThat(result.get(), is(Optional.of(targetUser.todos())));
+        assertThat(result.get(), is(targetUser.todos()));
     }
 
     @Test
@@ -94,7 +92,6 @@ class UserServiceAdapterTest {
         // When
         Either<String, Todo> result = userServiceAdapter.addTodo("Antoine", "Antoine", todo);
         // Then
-        System.out.println("result: " + result);
         assertThat(result.get(), is(todo));
     }
 }

@@ -1,8 +1,9 @@
-package lunatech.infra.api;
+package lunatech.application;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.ws.rs.core.MediaType;
+import lunatech.DevTestProfile;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;

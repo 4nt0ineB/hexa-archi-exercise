@@ -1,4 +1,4 @@
-package lunatech.infra.api;
+package lunatech;
 
 import io.quarkus.test.junit.QuarkusTestProfile;
 
