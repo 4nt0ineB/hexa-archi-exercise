@@ -7,11 +7,12 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 
 import java.util.List;
+import java.util.UUID;
 
 @MongoEntity(collection = "todos")
 public class TodoEntity {
     @BsonId
-    public String todoId;
+    public UUID todoId;
     @NotNull
     @NotBlank
     public String title;

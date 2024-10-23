@@ -12,6 +12,7 @@ import lunatech.domain.port.UserRepositoryPort;
 import org.jboss.logging.Logger;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -34,7 +35,7 @@ public class Startup {
                 new User("Ewen", "pwd", Role.REGULAR),
                 new User("Sebastien", "pwd", Role.REGULAR)
         );
-        users.get(1).addTodo(new Todo(String.valueOf(ThreadLocalRandom.current().nextLong()), "Run", List.of("sport", "health")));
+        users.get(1).addTodo(new Todo(UUID.randomUUID(), "Run", List.of("sport", "health")));
         users.forEach(u -> userRepository.save(u));
     }
 }

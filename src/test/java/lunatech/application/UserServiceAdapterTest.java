@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -74,7 +75,7 @@ class UserServiceAdapterTest {
         // Given
         User originUser = new User("Seb", "pwd1", Role.ADMIN);
         User targetUser = new User("Antoine", "pwd2", Role.REGULAR);
-        var todo = new Todo("1", "Do exercises", "", List.of("work"), false);
+        var todo = new Todo(UUID.randomUUID(), "Do exercises", "", List.of("work"), false);
         targetUser.addTodo(todo);
         when(userRepository.getByUsername("Seb")).thenReturn(Optional.of(originUser));
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(targetUser));
@@ -88,7 +89,7 @@ class UserServiceAdapterTest {
     void testAddTodoToUser() {
         // Given
         User user = new User("Antoine", "pwd2", Role.REGULAR);
-        Todo todo = new Todo("1", "do the shopping", "", List.of("home"), false);
+        Todo todo = new Todo(UUID.randomUUID(), "do the shopping", "", List.of("home"), false);
         when(userRepository.addTodoToUser(user, todo)).thenReturn(Either.right(todo));
         when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(user));
         // When

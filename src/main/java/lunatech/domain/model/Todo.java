@@ -2,10 +2,11 @@ package lunatech.domain.model;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
-public record Todo(String id, String title, String description, List<String> tags, boolean done) {
+public record Todo(UUID id, String title, String description, List<String> tags, boolean done) {
 
-    public Todo(String id, String title, List<String> tags) {
+    public Todo(UUID id, String title, List<String> tags) {
         this(id, title, "", tags, false);
     }
 
@@ -26,7 +27,7 @@ public record Todo(String id, String title, String description, List<String> tag
         return Objects.hash(id);
     }
 
-    public Todo withId(String id) {
+    public Todo withId(UUID id) {
         return new Todo(id, title, description, tags, done);
     }
 }

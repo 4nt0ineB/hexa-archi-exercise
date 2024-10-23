@@ -15,15 +15,12 @@ import org.jboss.logging.Logger;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 @Path("/api/todos")
 @Consumes(MediaType.APPLICATION_JSON)
 public class TodoResourceAdapter {
 
-    private static final Logger logger = Logger.getLogger(TodoResourceAdapter.class);
-
-    @Inject
-    Validator validator;
     @Inject
     SecurityService securityService;
 
@@ -55,6 +52,22 @@ public class TodoResourceAdapter {
                 .build();
     }
 
+    @GET
+    @Path("/{id}")
+    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
+    public Response todo(
+            @QueryParam("user") Optional<String> username,
+            @PathParam("id") UUID id
+    ) {
+        var userTarget = username.orElse(securityService.userName());
+
+        var todo = userService.findTodoById(securityService.userName(), userTarget, id);
+        return todo
+                .map(Response::ok)
+                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
+                .build();
+    }
+
     @POST
     @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response addTodo(
@@ -63,7 +76,7 @@ public class TodoResourceAdapter {
     ) {
         var userTarget = userName.orElse(securityService.userName());
         return userService.addTodo(securityService.userName(), userTarget, todoToAdd)
-                .map(eitherTodo -> Response.created(URI.create(String.format("/api/todos/%s", eitherTodo.id()))).entity(eitherTodo))
+                .map(todo -> Response.created(URI.create(String.format("/api/todos/%s", todo.id()))).entity(todo))
                 .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
                 .build();
     }
@@ -84,13 +97,16 @@ public class TodoResourceAdapter {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({Role.Names.ADMIN, Role.Names.REGULAR})
+    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response delete(
-            @QueryParam("user") Optional<String> userName
+            @QueryParam("user") Optional<String> userName,
+            @PathParam("id") String id
     ) {
         var userTarget = userName.orElse(securityService.userName());
-
-        return Response.ok().build();
+        return userService.deleteTodo(securityService.userName(), userTarget, id)
+                .map(Response::ok)
+                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
+                .build();
     }
 
 }

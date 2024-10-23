@@ -10,8 +10,7 @@ import lunatech.domain.port.UserServicePort;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 public class UserServiceAdapter implements UserServicePort {
 
@@ -40,11 +39,14 @@ public class UserServiceAdapter implements UserServicePort {
     }
 
     @Override
-    public Either<String, Optional<Todo>> findTodoById(String origin, String username, String id) {
+    public Either<String, Todo> findTodoById(String origin, String username, UUID id) {
         return findTarget(origin, username)
-                .map(user -> user.todos().stream()
-                        .filter(todo -> todo.id().equals(String.valueOf(id)))
-                        .findFirst());
+                .flatMap(user -> user.todos().stream()
+                        .filter(todo -> todo.id().equals(id))
+                        .findFirst()
+                        .map(Either::<String, Todo>right)
+                        .orElse(Either.left("Todo not found"))
+                );
     }
 
     @Override
@@ -57,7 +59,7 @@ public class UserServiceAdapter implements UserServicePort {
     public Either<String, Todo> addTodo(String origin, String target, Todo todo) {
         return findTarget(origin, target)
                 .flatMap(user -> {
-                    var id = String.valueOf(ThreadLocalRandom.current().nextLong());
+                    var id = UUID.randomUUID();
                     return userRepository.addTodoToUser(user, todo.withId(id));
                 });
     }
