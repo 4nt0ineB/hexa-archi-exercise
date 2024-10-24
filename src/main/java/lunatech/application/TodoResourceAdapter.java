@@ -6,11 +6,10 @@ import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lunatech.domain.todo.Todo;
 import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.Role;
-import lunatech.domain.todo.Todo;
 import lunatech.infra.security.SecurityService;
-import jakarta.validation.ConstraintViolation;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -26,7 +25,6 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TodoResourceAdapter {
 
-    @Inject Validator validator;
     @Inject SecurityService securityService;
 
     private final TodoServicePort todoService;

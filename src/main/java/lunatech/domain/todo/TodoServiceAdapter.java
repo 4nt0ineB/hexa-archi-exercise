@@ -3,9 +3,7 @@ package lunatech.domain.todo;
 import io.vavr.control.Either;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
-import jakarta.ws.rs.core.Response;
 import lunatech.domain.PermissionManager;
 
 import java.util.List;
