@@ -79,11 +79,6 @@ public class TodoResourceAdapter {
             @QueryParam("user") Optional<String> userName,
             Todo todoToAdd
     ) {
-        var violations = validator.validate(todoToAdd);
-        if (!violations.isEmpty()) {
-            var messages = violations.stream().map(ConstraintViolation::getMessage);
-            return Response.status(Response.Status.BAD_REQUEST).entity(messages).build();
-        }
         var userTarget = userName.orElse(securityService.userName());
         return todoService.add(securityService.userName(), userTarget, todoToAdd)
                 .map(todo -> Response.created(URI.create(String.format("/api/todos/%s", todo.id()))).entity(todo))
