@@ -1,6 +1,6 @@
-package lunatech.domain.port;
+package lunatech.domain.auth;
 
-import lunatech.domain.dto.UserInfo;
+import lunatech.domain.user.UserInfo;
 
 import java.util.Optional;
 

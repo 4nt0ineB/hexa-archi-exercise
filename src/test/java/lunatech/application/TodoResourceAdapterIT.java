@@ -48,7 +48,6 @@ public class TodoResourceAdapterIT {
 
     @Test
     public void testAddTodoAuthorized() {
-
         given()
                 .auth().basic("Ewen", "pwd")
                 .contentType(MediaType.APPLICATION_JSON)

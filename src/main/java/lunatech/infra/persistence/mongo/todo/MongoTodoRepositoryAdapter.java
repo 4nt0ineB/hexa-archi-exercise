@@ -1,11 +1,8 @@
-package lunatech.infra.persistence.mongo;
+package lunatech.infra.persistence.mongo.todo;
 
-import io.quarkus.arc.profile.IfBuildProfile;
 import jakarta.inject.Singleton;
-import lunatech.domain.model.Todo;
-import lunatech.domain.port.TodoRepositoryPort;
-import lunatech.infra.persistence.mongo.entities.TodoEntity;
-import lunatech.infra.persistence.mongo.entities.TodoMapper;
+import lunatech.domain.todo.Todo;
+import lunatech.domain.todo.TodoRepositoryPort;
 
 import java.util.List;
 import java.util.Optional;

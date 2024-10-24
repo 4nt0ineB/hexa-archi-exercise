@@ -1,8 +1,7 @@
-package lunatech.domain.adapter;
+package lunatech.domain.auth;
 
-import lunatech.domain.dto.UserInfo;
-import lunatech.domain.port.AuthServicePort;
-import lunatech.domain.port.UserRepositoryPort;
+import lunatech.domain.user.UserInfo;
+import lunatech.domain.user.UserRepositoryPort;
 
 import java.util.Optional;
 

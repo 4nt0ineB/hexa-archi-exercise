@@ -2,16 +2,13 @@ package lunatech.application;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lunatech.domain.port.TodoServicePort;
-import lunatech.domain.port.UserServicePort;
-import lunatech.domain.model.Role;
-import lunatech.domain.model.Todo;
+import lunatech.domain.todo.TodoServicePort;
+import lunatech.domain.user.Role;
+import lunatech.domain.todo.Todo;
 import lunatech.infra.security.SecurityService;
-import org.jboss.logging.Logger;
 
 import java.net.URI;
 import java.util.Arrays;

@@ -1,7 +1,6 @@
-package lunatech.domain.port;
+package lunatech.domain.todo;
 
 import io.vavr.control.Either;
-import lunatech.domain.model.Todo;
 
 import java.util.List;
 import java.util.UUID;

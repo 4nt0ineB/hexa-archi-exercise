@@ -1,7 +1,6 @@
-package lunatech.infra.persistence.mongo.entities;
+package lunatech.infra.persistence.mongo.todo;
 
-import lunatech.domain.model.Todo;
-import org.bson.types.ObjectId;
+import lunatech.domain.todo.Todo;
 
 import java.util.List;
 import java.util.UUID;

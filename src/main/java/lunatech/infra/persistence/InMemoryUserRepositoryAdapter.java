@@ -1,18 +1,13 @@
 package lunatech.infra.persistence;
 
 import io.quarkus.arc.profile.IfBuildProfile;
-import io.vavr.control.Either;
 import jakarta.enterprise.context.ApplicationScoped;
-import lunatech.domain.model.Todo;
-import lunatech.domain.model.User;
-import lunatech.domain.port.UserRepositoryPort;
-import org.jboss.logging.Logger;
+import lunatech.domain.user.User;
+import lunatech.domain.user.UserRepositoryPort;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 @ApplicationScoped
 @IfBuildProfile("test")

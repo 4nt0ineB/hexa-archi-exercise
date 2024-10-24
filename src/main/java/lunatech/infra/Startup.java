@@ -5,16 +5,15 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
-import lunatech.domain.model.Role;
-import lunatech.domain.model.Todo;
-import lunatech.domain.model.User;
-import lunatech.domain.port.TodoRepositoryPort;
-import lunatech.domain.port.UserRepositoryPort;
+import lunatech.domain.user.Role;
+import lunatech.domain.todo.Todo;
+import lunatech.domain.user.User;
+import lunatech.domain.todo.TodoRepositoryPort;
+import lunatech.domain.user.UserRepositoryPort;
 import org.jboss.logging.Logger;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 /**

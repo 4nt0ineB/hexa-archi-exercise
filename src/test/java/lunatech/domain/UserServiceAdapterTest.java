@@ -1,18 +1,11 @@
 package lunatech.domain;
 
 import io.vavr.control.Either;
-import lunatech.domain.adapter.UserServiceAdapter;
-import lunatech.domain.dto.UserInfo;
-import lunatech.domain.model.Role;
-import lunatech.domain.model.Todo;
-import lunatech.domain.model.User;
-import lunatech.domain.port.UserRepositoryPort;
+import lunatech.domain.user.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -27,7 +20,7 @@ class UserServiceAdapterTest {
     @BeforeEach
     void setup() {
         userRepository = mock(UserRepositoryPort.class);
-        userServiceAdapter = new UserServiceAdapter(userRepository, new PermissionManager());
+        userServiceAdapter = new UserServiceAdapter(new PermissionManager(userRepository));
     }
 
     @Test

@@ -1,8 +1,9 @@
-package lunatech.domain.model;
+package lunatech.domain.user;
+
+import lunatech.domain.todo.Todo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class User {
     private final String username;

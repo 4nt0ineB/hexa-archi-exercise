@@ -10,7 +10,7 @@ import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lunatech.domain.port.AuthServicePort;
+import lunatech.domain.auth.AuthServicePort;
 
 
 // https://quarkus.io/guides/security-basic-authentication-howto

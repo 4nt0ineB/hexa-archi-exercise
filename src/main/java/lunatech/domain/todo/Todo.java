@@ -1,4 +1,4 @@
-package lunatech.domain.model;
+package lunatech.domain.todo;
 
 import java.util.List;
 import java.util.Objects;

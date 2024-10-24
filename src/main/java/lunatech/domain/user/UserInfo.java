@@ -1,7 +1,4 @@
-package lunatech.domain.dto;
-
-import lunatech.domain.model.Role;
-import lunatech.domain.model.User;
+package lunatech.domain.user;
 
 public record UserInfo(String username, Role role) {
     public static UserInfo from(User user) {

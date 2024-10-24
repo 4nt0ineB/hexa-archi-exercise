@@ -1,18 +1,11 @@
-package lunatech.infra.persistence.mongo;
+package lunatech.infra.persistence.mongo.user;
 
 import io.quarkus.arc.profile.IfBuildProfile;
-import io.vavr.control.Either;
 import jakarta.inject.Singleton;
-import jakarta.transaction.Transactional;
-import lunatech.domain.model.Todo;
-import lunatech.domain.model.User;
-import lunatech.domain.port.UserRepositoryPort;
-import lunatech.infra.persistence.mongo.entities.TodoMapper;
-import lunatech.infra.persistence.mongo.entities.UserEntity;
-import lunatech.infra.persistence.mongo.entities.UserMapper;
+import lunatech.domain.user.User;
+import lunatech.domain.user.UserRepositoryPort;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Singleton
 @IfBuildProfile("dev")

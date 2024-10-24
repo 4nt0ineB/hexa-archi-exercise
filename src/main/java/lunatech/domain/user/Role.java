@@ -1,4 +1,4 @@
-package lunatech.domain.model;
+package lunatech.domain.user;
 
 public enum Role {
     ADMIN,

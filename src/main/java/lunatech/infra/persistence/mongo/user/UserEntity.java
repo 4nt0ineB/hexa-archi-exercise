@@ -1,11 +1,9 @@
-package lunatech.infra.persistence.mongo.entities;
+package lunatech.infra.persistence.mongo.user;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-import java.util.List;
 
 @MongoEntity(collection = "users")
 public class UserEntity extends PanacheMongoEntity {

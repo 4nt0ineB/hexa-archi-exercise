@@ -1,12 +1,11 @@
 package lunatech.domain;
 
 import io.quarkus.test.junit.QuarkusTest;
-import lunatech.domain.adapter.AuthServiceAdapter;
-import lunatech.domain.dto.UserInfo;
-import lunatech.domain.model.Role;
-import lunatech.domain.model.User;
-import lunatech.domain.port.UserRepositoryPort;
-import org.junit.jupiter.api.BeforeAll;
+import lunatech.domain.auth.AuthServiceAdapter;
+import lunatech.domain.user.Role;
+import lunatech.domain.user.UserInfo;
+import lunatech.domain.user.User;
+import lunatech.domain.user.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +55,6 @@ public class AuthServiceAdapterTest {
     public void testAuthenticateUserExistsButCredentialsInvalid() {
         // Given
         String username = "Antoine";
-        String password = "pwd";
         when(userRepository.get("Antoine")).thenReturn(Optional.of(new User("Antoine", "pwd", Role.REGULAR)));
         // When
         var maybeUserInfo = authServiceAdapter.authenticate(username, "wrongpwd");

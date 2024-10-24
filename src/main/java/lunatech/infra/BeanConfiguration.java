@@ -3,11 +3,15 @@ package lunatech.infra;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import lunatech.domain.auth.AuthServicePort;
 import lunatech.domain.PermissionManager;
-import lunatech.domain.adapter.AuthServiceAdapter;
-import lunatech.domain.adapter.TodoServiceAdapter;
-import lunatech.domain.adapter.UserServiceAdapter;
-import lunatech.domain.port.*;
+import lunatech.domain.auth.AuthServiceAdapter;
+import lunatech.domain.todo.TodoRepositoryPort;
+import lunatech.domain.todo.TodoServiceAdapter;
+import lunatech.domain.user.UserRepositoryPort;
+import lunatech.domain.user.UserServiceAdapter;
+import lunatech.domain.todo.TodoServicePort;
+import lunatech.domain.user.UserServicePort;
 
 @ApplicationScoped
 public class BeanConfiguration {
@@ -17,20 +21,24 @@ public class BeanConfiguration {
     @Inject
     TodoRepositoryPort todoRepository;
     @Inject
-    UserServicePort userService;
-    private final PermissionManager permissionManager = new PermissionManager();
+    PermissionManager permissionManager;
 
+    @Produces
+    @ApplicationScoped
+    public PermissionManager permissionManager() {
+        return new PermissionManager(userRepository);
+    }
 
     @Produces
     @ApplicationScoped
     public UserServicePort orderService() {
-        return new UserServiceAdapter(userRepository, permissionManager);
+        return new UserServiceAdapter(permissionManager);
     }
 
     @Produces
     @ApplicationScoped
     public TodoServicePort todoService() {
-        return new TodoServiceAdapter(todoRepository, userService);
+        return new TodoServiceAdapter(todoRepository, permissionManager);
     }
 
     @Produces
@@ -38,6 +46,5 @@ public class BeanConfiguration {
     public AuthServicePort authService() {
         return new AuthServiceAdapter(userRepository);
     }
-
 
 }

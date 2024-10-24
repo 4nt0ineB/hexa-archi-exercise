@@ -1,9 +1,7 @@
-package lunatech.infra.persistence.mongo.entities;
+package lunatech.infra.persistence.mongo.user;
 
-import lunatech.domain.model.Role;
-import lunatech.domain.model.User;
-
-import java.util.stream.Collectors;
+import lunatech.domain.user.Role;
+import lunatech.domain.user.User;
 
 public class UserMapper {
     public static UserEntity toEntity(User user) {

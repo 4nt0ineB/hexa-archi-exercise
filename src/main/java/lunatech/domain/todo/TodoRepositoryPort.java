@@ -1,6 +1,4 @@
-package lunatech.domain.port;
-
-import lunatech.domain.model.Todo;
+package lunatech.domain.todo;
 
 import java.util.List;
 import java.util.Optional;
