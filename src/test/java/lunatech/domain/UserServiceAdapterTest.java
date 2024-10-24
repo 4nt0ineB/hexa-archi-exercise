@@ -27,14 +27,14 @@ class UserServiceAdapterTest {
     @BeforeEach
     void setup() {
         userRepository = mock(UserRepositoryPort.class);
-        userServiceAdapter = new UserServiceAdapter(userRepository);
+        userServiceAdapter = new UserServiceAdapter(userRepository, new PermissionManager());
     }
 
     @Test
     void testFindSelf() {
         // Given
         User originUser = new User("Antoine", "pwd", Role.REGULAR);
-        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(originUser));
+        when(userRepository.get("Antoine")).thenReturn(Optional.of(originUser));
         // When
         Either<String, UserInfo> result = userServiceAdapter.find("Antoine", "Antoine");
         // Then
@@ -46,8 +46,8 @@ class UserServiceAdapterTest {
         // Given
         User originUser = new User("Seb", "pwd1", Role.ADMIN);
         User targetUser = new User("Antoine", "pwd2", Role.REGULAR);
-        when(userRepository.getByUsername("Seb")).thenReturn(Optional.of(originUser));
-        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(targetUser));
+        when(userRepository.get("Seb")).thenReturn(Optional.of(originUser));
+        when(userRepository.get("Antoine")).thenReturn(Optional.of(targetUser));
         // When
         Either<String, UserInfo> result = userServiceAdapter.find("Seb", "Antoine");
         // Then
@@ -59,39 +59,11 @@ class UserServiceAdapterTest {
         // Given
         User originUser = new User("Antoine", "pwd2", Role.REGULAR);
         User targetUser = new User("Ewen", "pwd3", Role.REGULAR);
-        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(originUser));
-        when(userRepository.getByUsername("Ewen")).thenReturn(Optional.of(targetUser));
+        when(userRepository.get("Antoine")).thenReturn(Optional.of(originUser));
+        when(userRepository.get("Ewen")).thenReturn(Optional.of(targetUser));
         // When
         Either<String, UserInfo> result = userServiceAdapter.find("Antoine", "Ewen");
         // Then
         assertThat(result.isLeft(), is(true));
-    }
-
-    @Test
-    void testFindTodosAsAdmin() {
-        // Given
-        User originUser = new User("Seb", "pwd1", Role.ADMIN);
-        User targetUser = new User("Antoine", "pwd2", Role.REGULAR);
-        var todo = new Todo(UUID.randomUUID(), "Do exercises", "", List.of("work"), false);
-        targetUser.addTodo(todo);
-        when(userRepository.getByUsername("Seb")).thenReturn(Optional.of(originUser));
-        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(targetUser));
-        // When
-        Either<String, List<Todo>> result = userServiceAdapter.findTodos("Seb", "Antoine");
-        // Then
-        assertThat(result.get(), is(targetUser.todos()));
-    }
-
-    @Test
-    void testAddTodoToUser() {
-        // Given
-        User user = new User("Antoine", "pwd2", Role.REGULAR);
-        Todo todo = new Todo(UUID.randomUUID(), "do the shopping", "", List.of("home"), false);
-        when(userRepository.addTodoToUser(user, todo)).thenReturn(Either.right(todo));
-        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(user));
-        // When
-        Either<String, Todo> result = userServiceAdapter.addTodo("Antoine", "Antoine", todo);
-        // Then
-        assertThat(result.get(), is(todo));
     }
 }

@@ -34,7 +34,7 @@ public class AuthServiceAdapterTest {
         // Given
         String username = "Antoine";
         String password = "pwd";
-        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(new User("Antoine", "pwd", Role.REGULAR)));
+        when(userRepository.get("Antoine")).thenReturn(Optional.of(new User("Antoine", "pwd", Role.REGULAR)));
         // When
         var maybeUserInfo = authServiceAdapter.authenticate(username, password);
         // Then
@@ -57,7 +57,7 @@ public class AuthServiceAdapterTest {
         // Given
         String username = "Antoine";
         String password = "pwd";
-        when(userRepository.getByUsername("Antoine")).thenReturn(Optional.of(new User("Antoine", "pwd", Role.REGULAR)));
+        when(userRepository.get("Antoine")).thenReturn(Optional.of(new User("Antoine", "pwd", Role.REGULAR)));
         // When
         var maybeUserInfo = authServiceAdapter.authenticate(username, "wrongpwd");
         // Then
