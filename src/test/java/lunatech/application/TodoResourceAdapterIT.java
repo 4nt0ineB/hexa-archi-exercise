@@ -1,18 +1,22 @@
 package lunatech.application;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.ws.rs.core.MediaType;
-import lunatech.DevTestProfile;
+import lunatech.TestProfile;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
-@TestProfile(DevTestProfile.class)
+@io.quarkus.test.junit.TestProfile(TestProfile.class)
 public class TodoResourceAdapterIT {
 
+    @BeforeAll
+    public static void setup() {
+
+    }
 
     @Test
     public void testGetTodosNotAuthenticated() {

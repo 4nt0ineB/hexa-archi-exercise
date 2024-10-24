@@ -1,7 +1,9 @@
 package lunatech.infra.persistence.mongo.user;
 
 import io.quarkus.arc.profile.IfBuildProfile;
+import jakarta.enterprise.inject.Default;
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.DecimalMin;
 import lunatech.domain.user.User;
 import lunatech.domain.user.UserRepositoryPort;
 
