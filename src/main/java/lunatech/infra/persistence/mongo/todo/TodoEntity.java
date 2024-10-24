@@ -12,8 +12,6 @@ import java.util.List;
 public class TodoEntity extends PanacheMongoEntityBase {
     @BsonId
     public String id;
-    @NotNull
-    @NotBlank
     public String username;
     @NotBlank
     public String title;
