@@ -1,5 +1,7 @@
 package lunatech.infra.persistence.mongo.entities;
 
+import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,9 +12,12 @@ import java.util.List;
 import java.util.UUID;
 
 @MongoEntity(collection = "todos")
-public class TodoEntity {
+public class TodoEntity extends PanacheMongoEntityBase {
+    @BsonId
     public String id;
     @NotNull
+    @NotBlank
+    public String username;
     @NotBlank
     public String title;
     @NotNull

@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lunatech.domain.model.Role;
 import lunatech.domain.model.Todo;
 import lunatech.domain.model.User;
+import lunatech.domain.port.TodoRepositoryPort;
 import lunatech.domain.port.UserRepositoryPort;
 import org.jboss.logging.Logger;
 
@@ -28,6 +29,9 @@ public class Startup {
     @Inject
     UserRepositoryPort userRepository;
 
+    @Inject
+    TodoRepositoryPort todoRepository;
+
     @Transactional
     public void loadFixtures(@Observes StartupEvent evt) {
         logger.info("Executing fixtures startup operation");
@@ -36,7 +40,7 @@ public class Startup {
                 new User("Ewen", "pwd", Role.REGULAR),
                 new User("Sebastien", "pwd", Role.REGULAR)
         );
-        users.get(1).addTodo(new Todo(UUID.randomUUID(), "Run", List.of("sport", "health")));
         users.forEach(u -> userRepository.save(u));
+        todoRepository.add("Ewen", new Todo(UUID.randomUUID(), "Run", List.of("sport", "health")));
     }
 }

@@ -35,19 +35,11 @@ public class UserEntity extends PanacheMongoEntity {
     @Size(min = 3, max = 10, message="Role length should be between 3 and 10 characters")
     public String role;
 
-    /**
-     * Associated todos
-     * @example List.empty<TodoEntity>
-     */
-    @NotNull(message = "Todos should be set")
-    public List<TodoEntity> todos = List.of();
-
     public UserEntity() {}
 
-    public UserEntity(@NotNull String username, @NotNull String password, @NotNull String role, @NotNull List<TodoEntity> todos) {
+    public UserEntity(@NotNull String username, @NotNull String password, @NotNull String role) {
         this.username = username;
         this.password = password;
         this.role = role;
-        this.todos = todos;
     }
 }

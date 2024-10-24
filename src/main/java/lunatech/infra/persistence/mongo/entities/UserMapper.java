@@ -9,16 +9,10 @@ public class UserMapper {
     public static UserEntity toEntity(User user) {
         return new UserEntity(user.username(),
                 user.password(),
-                user.role().name(),
-                user.todos().stream().map(TodoMapper::toEntity).collect(Collectors.toList()));
+                user.role().name());
     }
 
     public static User toDomain(UserEntity userEntity) {
-        User user = new User(userEntity.username, userEntity.password, Role.valueOf(userEntity.role));
-        userEntity.todos
-                .stream()
-                .map(TodoMapper::toDomain)
-                .forEach(user::addTodo);
-        return user;
+        return new User(userEntity.username, userEntity.password, Role.valueOf(userEntity.role));
     }
 }
