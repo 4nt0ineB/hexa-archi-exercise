@@ -15,7 +15,7 @@ public class AuthServiceAdapter implements AuthServicePort {
     }
 
     public Optional<UserInfo> authenticate(String username, String password) {
-        return userRepositoryAdapter.getByUsername(username)
+        return userRepositoryAdapter.get(username)
                 .filter(user -> user.password().equals(password))
                 .map(user -> new UserInfo(user.username(), user.role()));
     }
