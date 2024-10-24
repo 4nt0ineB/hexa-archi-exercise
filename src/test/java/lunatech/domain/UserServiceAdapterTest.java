@@ -20,7 +20,7 @@ class UserServiceAdapterTest {
     @BeforeEach
     void setup() {
         userRepository = mock(UserRepositoryPort.class);
-        userServiceAdapter = new UserServiceAdapter(new PermissionManager(userRepository));
+        userServiceAdapter = new UserServiceAdapter(userRepository, new PermissionManager(userRepository));
     }
 
     @Test

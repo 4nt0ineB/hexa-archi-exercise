@@ -32,7 +32,7 @@ public class BeanConfiguration {
     @Produces
     @ApplicationScoped
     public UserServicePort orderService() {
-        return new UserServiceAdapter(permissionManager);
+        return new UserServiceAdapter(userRepository, permissionManager);
     }
 
     @Produces
