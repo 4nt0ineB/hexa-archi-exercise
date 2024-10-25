@@ -5,13 +5,14 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
-import lunatech.domain.user.*;
-import lunatech.domain.todo.Todo;
-import lunatech.domain.todo.TodoRepositoryPort;
+import lunatech.domain.todo.TodoDTO;
+import lunatech.domain.todo.TodoServicePort;
+import lunatech.domain.user.Role;
+import lunatech.domain.user.User;
+import lunatech.domain.user.UserServicePort;
 import org.jboss.logging.Logger;
 
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -27,7 +28,7 @@ public class Startup {
     UserServicePort userService;
 
     @Inject
-    TodoRepositoryPort todoRepository;
+    TodoServicePort todoService;
 
     @Transactional
     public void loadFixtures(@Observes StartupEvent evt) {
@@ -38,6 +39,6 @@ public class Startup {
                 new User("Sebastien", "pwd", Role.REGULAR)
         );
         users.forEach(u -> userService.create(u));
-        todoRepository.add("Ewen", new Todo(UUID.randomUUID(), "Run", List.of("sport", "health")));
+        todoService.add("Ewen", "Ewen", new TodoDTO("Run", "", List.of("sport", "health")));
     }
 }

@@ -9,9 +9,11 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lunatech.domain.todo.Todo;
+import lunatech.domain.todo.TodoDTO;
 import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.Role;
 import lunatech.infra.security.SecurityService;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBodySchema;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -75,7 +77,7 @@ public class TodoResourceAdapter {
     @POST
     public Response addTodo(
             @QueryParam("user") Optional<String> userName,
-            Todo todoToAdd
+            TodoDTO todoToAdd
     ) {
         var userTarget = userName.orElse(securityService.userName());
         return todoService.add(securityService.userName(), userTarget, todoToAdd)

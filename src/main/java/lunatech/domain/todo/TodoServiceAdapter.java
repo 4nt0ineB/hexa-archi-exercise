@@ -58,10 +58,19 @@ public class TodoServiceAdapter implements TodoServicePort {
     }
 
     @Override
-    public Either<String, Todo> add(String origin, String target, Todo todo) {
-        var errors = validate(todo);
+    public Either<String, Todo> add(String origin, String target, TodoDTO todoDto) {
+        var errors = validate(todoDto);
         return errors.<Either<String, Todo>>map(Either::left).orElseGet(() -> permissionManager.canSee(origin, target)
-                .flatMap(__ -> Either.right(todoRepository.add(target, todo.id() == null ? todo.withId(UUID.randomUUID()) : todo))));
+                .flatMap(__ -> {
+                    var todo = new Todo(
+                            UUID.randomUUID(),
+                            todoDto.title(),
+                            todoDto.description(),
+                            todoDto.tags(),
+                            false
+                    );
+                    return Either.right(todoRepository.add(target, todo));
+                }));
     }
 
     @Override
@@ -72,7 +81,7 @@ public class TodoServiceAdapter implements TodoServicePort {
                                 .orElse(Either.left("Todo not found")));
     }
 
-    private Optional<String> validate(Todo todo) {
+    private <T> Optional<String> validate(T todo) {
         var violations = validator.validate(todo);
         if (!violations.isEmpty()) {
             var messages = violations.stream().map(ConstraintViolation::getMessage);
