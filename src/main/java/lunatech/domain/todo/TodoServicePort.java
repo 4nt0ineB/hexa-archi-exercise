@@ -1,15 +1,21 @@
 package lunatech.domain.todo;
 
-import io.vavr.control.Either;
-
 import java.util.List;
 import java.util.UUID;
 
 public interface TodoServicePort {
-    Either<String, List<Todo>> find(String origin, String target) ;
-    Either<String, List<Todo>> findWithTags(String origin, String target, List<String> tags);
-    Either<String, Todo> findById(String origin, String username, UUID id);
-    Either<String, Todo> update(String origin, String username, Todo todo);
-    Either<String, Todo> add(String origin, String target, TodoDTO todo);
-    Either<String, UUID> delete(String origin, String target, UUID id);
+    List<Todo> find(String origin, String target) ;
+    List<Todo> findWithTags(String origin, String target, List<String> tags);
+    /**
+     * Find a todo by its ID
+     * @param origin the origin user of the request
+     * @param username the target user of the request
+     * @param id the ID of the todo
+     * @return The todo
+     * @throws UnknownTodoException if the todo is not found
+     */
+    Todo findById(String origin, String username, UUID id);
+    Todo update(String origin, String username, Todo todo);
+    Todo add(String origin, String target, TodoDTO todo);
+    UUID delete(String origin, String target, UUID id);
 }

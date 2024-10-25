@@ -3,20 +3,14 @@ package lunatech.application;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.core.MediaType;
 import lunatech.TestProfile;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 @QuarkusTest
 @io.quarkus.test.junit.TestProfile(TestProfile.class)
 public class TodoResourceAdapterIT {
-
-    @BeforeAll
-    public static void setup() {
-
-    }
 
     @Test
     public void testGetTodosNotAuthenticated() {

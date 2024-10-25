@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -13,7 +12,6 @@ import lunatech.domain.todo.TodoDTO;
 import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.Role;
 import lunatech.infra.security.SecurityService;
-import org.eclipse.microprofile.openapi.annotations.parameters.RequestBodySchema;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -27,6 +25,7 @@ import java.util.UUID;
  */
 @Path("/api/todos")
 @Consumes(MediaType.APPLICATION_JSON)
+@RolesAllowed({Role.Names.ADMIN, Role.Names.REGULAR})
 public class TodoResourceAdapter {
 
     @Inject SecurityService securityService;
@@ -52,11 +51,7 @@ public class TodoResourceAdapter {
                     return todoService.findWithTags(securityService.userName(), userTarget, tagList);
                 })
                 .orElse(todoService.find(securityService.userName(), userTarget));
-
-        return todos
-                .map(Response::ok)
-                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
-                .build();
+        return Response.ok().entity(todos).build();
     }
 
     @GET
@@ -66,12 +61,8 @@ public class TodoResourceAdapter {
             @PathParam("id") UUID id
     ) {
         var userTarget = username.orElse(securityService.userName());
-
         var todo = todoService.findById(securityService.userName(), userTarget, id);
-        return todo
-                .map(Response::ok)
-                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
-                .build();
+        return Response.ok(todo).build();
     }
 
     @POST
@@ -80,12 +71,10 @@ public class TodoResourceAdapter {
             TodoDTO todoToAdd
     ) {
         var userTarget = userName.orElse(securityService.userName());
-        return todoService.add(securityService.userName(), userTarget, todoToAdd)
-                .map(todo -> {
-                    metrics.counter("todos.created").increment();
-                    return Response.created(URI.create(String.format("/api/todos/%s", todo.id()))).entity(todo);
-                })
-                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
+        var todo = todoService.add(securityService.userName(), userTarget, todoToAdd);
+        metrics.counter("todos.created").increment();
+        return Response.created(URI.create(String.format("/api/todos/%s", todo.id())))
+                .entity(todo)
                 .build();
     }
 
@@ -96,10 +85,8 @@ public class TodoResourceAdapter {
             Todo todoToUpdate
     ) {
         var userTarget = userName.orElse(securityService.userName());
-        return todoService.update(securityService.userName(), userTarget, todoToUpdate)
-                .map(Response::ok)
-                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
-                .build();
+        var todo = todoService.update(securityService.userName(), userTarget, todoToUpdate);
+        return Response.ok().entity(todo).build();
     }
 
     @DELETE
@@ -109,10 +96,9 @@ public class TodoResourceAdapter {
             @PathParam("id") UUID id
     ) {
         var userTarget = userName.orElse(securityService.userName());
-        return todoService.delete(securityService.userName(), userTarget, id)
-                .map(Response::ok)
-                .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
+
+        return Response.ok()
+                .entity(todoService.delete(securityService.userName(), userTarget, id))
                 .build();
     }
-
 }

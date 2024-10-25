@@ -1,7 +1,8 @@
 package lunatech.domain.user;
 
 import io.vavr.control.Either;
-import lunatech.domain.PermissionManager;
+import lunatech.domain.permission.ForbiddenActionException;
+import lunatech.domain.permission.PermissionManager;
 
 public class UserServiceAdapter implements UserServicePort {
 
@@ -17,8 +18,13 @@ public class UserServiceAdapter implements UserServicePort {
     }
 
     @Override
-    public Either<String, UserInfo> find(String origin, String target) {
-        return permissionManager.canSee(origin, target);
+    public UserInfo find(String origin, String target) {
+        var originUser = getUserInfo(origin);
+        var targetUser = getUserInfo(target);
+        if(!permissionManager.hasRightsOver(originUser, targetUser)) {
+            throw new ForbiddenActionException("");
+        }
+        return targetUser;
     }
 
     @Override
@@ -29,6 +35,12 @@ public class UserServiceAdapter implements UserServicePort {
                         .map(user -> Either.<String, UserInfo>right(UserInfo.from(user)))
                         .orElse(Either.left("User could not be saved"))
                 );
+    }
+
+    private UserInfo getUserInfo(String username) {
+        return userRepository.get(username)
+                .map(UserInfo::from)
+                .orElseThrow(() -> new UnknownUserException(username));
     }
 }
 
