@@ -38,7 +38,6 @@ public class TodoResourceAdapter {
     }
 
     @GET
-    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response todos(
             @QueryParam("tags") Optional<String> tagsFilter,
             @QueryParam("user") Optional<String> userName
@@ -60,7 +59,6 @@ public class TodoResourceAdapter {
 
     @GET
     @Path("/{id}")
-    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response todo(
             @QueryParam("user") Optional<String> username,
             @PathParam("id") UUID id
@@ -75,7 +73,6 @@ public class TodoResourceAdapter {
     }
 
     @POST
-    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response addTodo(
             @QueryParam("user") Optional<String> userName,
             Todo todoToAdd
@@ -92,7 +89,6 @@ public class TodoResourceAdapter {
 
     @PUT
     @Path("/")
-    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response updateTodo(
             @QueryParam("user") Optional<String> userName,
             Todo todoToUpdate
@@ -106,7 +102,6 @@ public class TodoResourceAdapter {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ Role.Names.ADMIN, Role.Names.REGULAR })
     public Response delete(
             @QueryParam("user") Optional<String> userName,
             @PathParam("id") UUID id
