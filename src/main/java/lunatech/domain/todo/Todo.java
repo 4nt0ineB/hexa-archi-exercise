@@ -35,16 +35,6 @@ public record Todo(
         tags = List.copyOf(tags);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Todo other && Objects.equals(id, other.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
     public Todo withId(UUID id) {
         return new Todo(id, title, description, tags, done);
     }
