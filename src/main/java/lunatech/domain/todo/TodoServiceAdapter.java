@@ -1,7 +1,6 @@
 package lunatech.domain.todo;
 
 import io.vavr.control.Either;
-import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lunatech.domain.PermissionManager;
@@ -12,14 +11,17 @@ import java.util.UUID;
 
 public class TodoServiceAdapter implements TodoServicePort {
 
-    @Inject Validator validator;
+    private final Validator validator;
 
     private final TodoRepositoryPort todoRepository;
     private final PermissionManager permissionManager;
 
     public TodoServiceAdapter(
             TodoRepositoryPort todoRepository,
-            PermissionManager permissionManager) {
+            PermissionManager permissionManager,
+            Validator validator
+            ) {
+        this.validator = validator;
         this.todoRepository = todoRepository;
         this.permissionManager = permissionManager;
     }

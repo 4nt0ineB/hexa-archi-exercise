@@ -1,8 +1,10 @@
 package lunatech.infra;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import jakarta.validation.Validator;
 import lunatech.domain.auth.AuthServicePort;
 import lunatech.domain.PermissionManager;
 import lunatech.domain.auth.AuthServiceAdapter;
@@ -12,9 +14,14 @@ import lunatech.domain.user.UserRepositoryPort;
 import lunatech.domain.user.UserServiceAdapter;
 import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.UserServicePort;
+import lunatech.infra.security.UserIdentityProvider;
+
 
 @ApplicationScoped
 public class BeanConfiguration {
+
+    @Inject
+    Validator validator;
 
     @Inject
     UserRepositoryPort userRepository;
@@ -38,7 +45,7 @@ public class BeanConfiguration {
     @Produces
     @ApplicationScoped
     public TodoServicePort todoService() {
-        return new TodoServiceAdapter(todoRepository, permissionManager);
+        return new TodoServiceAdapter(todoRepository, permissionManager, validator);
     }
 
     @Produces
