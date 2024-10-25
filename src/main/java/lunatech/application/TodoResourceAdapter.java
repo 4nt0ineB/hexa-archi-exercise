@@ -1,5 +1,7 @@
 package lunatech.application;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class TodoResourceAdapter {
 
     @Inject SecurityService securityService;
+    MeterRegistry metrics = Metrics.globalRegistry;
 
     private final TodoServicePort todoService;
 
@@ -79,7 +82,10 @@ public class TodoResourceAdapter {
     ) {
         var userTarget = userName.orElse(securityService.userName());
         return todoService.add(securityService.userName(), userTarget, todoToAdd)
-                .map(todo -> Response.created(URI.create(String.format("/api/todos/%s", todo.id()))).entity(todo))
+                .map(todo -> {
+                    metrics.counter("todos.created").increment();
+                    return Response.created(URI.create(String.format("/api/todos/%s", todo.id()))).entity(todo);
+                })
                 .getOrElseGet(error -> Response.status(Response.Status.FORBIDDEN).entity(error))
                 .build();
     }
