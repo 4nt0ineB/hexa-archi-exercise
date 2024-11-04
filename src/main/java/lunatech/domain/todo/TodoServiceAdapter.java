@@ -5,8 +5,7 @@ import jakarta.validation.Validator;
 import lunatech.domain.user.UserServicePort;
 import org.jboss.logging.Logger;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TodoServiceAdapter implements TodoServicePort {
 
@@ -14,6 +13,8 @@ public class TodoServiceAdapter implements TodoServicePort {
     private final Validator validator;
     private final TodoRepositoryPort todoRepository;
     private final UserServicePort userService;
+
+    private final Set<UUID> deletedTodos = new HashSet<>();
 
     public TodoServiceAdapter(
             TodoRepositoryPort todoRepository,
@@ -72,9 +73,15 @@ public class TodoServiceAdapter implements TodoServicePort {
     @Override
     public UUID delete(String origin, String target, UUID id) {
         logAction("Deleting todo ID: %s", origin, target, id);
+        if(deletedTodos.contains(id)) { // idempotent
+            return id;
+        }
         userService.find(origin, target);
-        return todoRepository.delete(target, id)
-                .orElseThrow(() -> new UnknownTodoException(id));
+        var maybeDeletedId = todoRepository.delete(target, id);
+        if(maybeDeletedId.isPresent()) {
+            deletedTodos.add(id);
+        }
+        return maybeDeletedId.orElseThrow(() -> new UnknownTodoException(id)); // never ever existed
     }
 
     private <T> void validate(T todo) {

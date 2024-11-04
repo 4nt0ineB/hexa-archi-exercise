@@ -2,6 +2,8 @@ package lunatech.application;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
+import io.netty.handler.codec.http.HttpStatusClass;
+import io.vertx.core.spi.observability.HttpResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -90,11 +92,12 @@ public class TodoResourceAdapter {
 
     @DELETE
     @Path("/{id}")
-    public UUID delete(
+    public Response delete(
             @QueryParam("user") Optional<String> userName,
             @PathParam("id") UUID id
     ) {
         var userTarget = userName.orElse(securityService.userName());
-        return todoService.delete(securityService.userName(), userTarget, id);
+        todoService.delete(securityService.userName(), userTarget, id);
+        return Response.noContent().build();
     }
 }
