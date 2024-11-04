@@ -61,9 +61,7 @@ public class MongoTodoRepositoryAdapter implements TodoRepositoryPort {
 
     @Override
     public Optional<UUID> delete(String username, UUID id) {
-        System.out.println("Deleting todo with id: " + id);
         var count =  TodoEntity.delete("{'username': ?1, '_id': ?2}", username, id.toString());
-        System.out.println("Deleted todos: " + count);
         return count > 0 ? Optional.of(id) : Optional.empty();
     }
 }

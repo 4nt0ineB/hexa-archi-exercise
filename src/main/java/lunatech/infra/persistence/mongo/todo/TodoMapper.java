@@ -17,7 +17,8 @@ public class TodoMapper {
     }
 
     public static Todo toDomain(TodoEntity entity) {
-        return new Todo(UUID.fromString(entity.id),
+        return new Todo(
+                UUID.fromString(entity.id),
                 entity.title,
                 entity.description,
                 entity.tags == null ? List.of() : entity.tags,

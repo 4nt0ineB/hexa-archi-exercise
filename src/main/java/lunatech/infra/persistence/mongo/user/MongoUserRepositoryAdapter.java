@@ -26,4 +26,9 @@ public class MongoUserRepositoryAdapter implements UserRepositoryPort {
         UserEntity.persist(entity);
         return Optional.of(UserMapper.toDomain(entity));
     }
+
+    @Override
+    public Long delete(String username) {
+        return UserEntity.<UserEntity>delete("username", username);
+    }
 }

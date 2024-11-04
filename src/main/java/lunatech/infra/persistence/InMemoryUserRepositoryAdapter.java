@@ -25,4 +25,10 @@ public class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
         users.put(user.username(), user);
         return Optional.of(user);
     }
+
+    @Override
+    public Long delete(String username) {
+        users.remove(username);
+        return 1L;
+    }
 }

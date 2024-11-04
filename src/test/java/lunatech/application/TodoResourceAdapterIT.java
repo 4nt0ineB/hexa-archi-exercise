@@ -1,22 +1,39 @@
 package lunatech.application;
 
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import lunatech.TestProfile;
-import org.junit.jupiter.api.Test;
+import lunatech.infra.persistence.mongo.user.UserFixtures;
+import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 @QuarkusTest
 @io.quarkus.test.junit.TestProfile(TestProfile.class)
+@TestHTTPEndpoint(TodoResourceAdapter.class)
 public class TodoResourceAdapterIT {
+
+    @Inject
+    UserFixtures userFixtures;
+
+    @BeforeEach
+    public void setup() {
+        userFixtures.load();
+    }
+
+    @AfterEach
+    public void setupAll() {
+        userFixtures.clear();
+    }
 
     @Test
     public void testGetTodosNotAuthenticated() {
         given()
                 .when()
-                .get("/api/todos")
+                .get()
                 .then()
                 .statusCode(401);
     }
@@ -27,18 +44,18 @@ public class TodoResourceAdapterIT {
                 .auth().basic("Ewen", "pwd")
                 .queryParam("user", "Sebastien")
         .when()
-                .get("/api/todos")
+                .get()
         .then()
                 .statusCode(403);
     }
-
     @Test
     public void testGetTodosAuthorized() {
         given()
                 .auth().basic("Nicolas", "pwd")
                 .queryParam("user", "Ewen")
                 .when()
-                .get("/api/todos")
+                .get()
+                .peek()
                 .then()
                 .statusCode(200)
                 .body("size()", equalTo(1));
@@ -57,9 +74,10 @@ public class TodoResourceAdapterIT {
                 }
                 """)
                 .when()
-                .post("/api/todos")
+                .post()
                 .then()
                 .statusCode(201)
                 .body("title", equalTo("Test Todo"));
     }
+
 }

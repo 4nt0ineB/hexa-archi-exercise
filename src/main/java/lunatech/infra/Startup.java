@@ -1,5 +1,6 @@
 package lunatech.infra;
 
+import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -10,6 +11,7 @@ import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.Role;
 import lunatech.domain.user.User;
 import lunatech.domain.user.UserServicePort;
+import lunatech.infra.persistence.mongo.user.UserFixtures;
 import org.jboss.logging.Logger;
 
 import java.util.List;
@@ -21,24 +23,13 @@ import java.util.List;
  */
 
 @Singleton
+@IfBuildProfile("dev")
 public class Startup {
-    private static final Logger logger = Logger.getLogger(Startup.class);
 
     @Inject
-    UserServicePort userService;
+    UserFixtures userFixtures;
 
-    @Inject
-    TodoServicePort todoService;
-
-    @Transactional
-    public void loadFixtures(@Observes StartupEvent evt) {
-        logger.info("Executing fixtures startup operation");
-        var users = List.of(
-                new User("Nicolas", "pwd", Role.ADMIN),
-                new User("Ewen", "pwd", Role.REGULAR),
-                new User("Sebastien", "pwd", Role.REGULAR)
-        );
-        users.forEach(u -> userService.create(u));
-        todoService.add("Ewen", "Ewen", new TodoDTO("Run", "", List.of("sport", "health")));
+    public void start(@Observes StartupEvent evt) {
+        userFixtures.load();
     }
 }
