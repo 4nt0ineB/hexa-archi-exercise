@@ -2,8 +2,6 @@ package lunatech.application;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
-import io.netty.handler.codec.http.HttpStatusClass;
-import io.vertx.core.spi.observability.HttpResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

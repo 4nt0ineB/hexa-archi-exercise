@@ -1,7 +1,5 @@
 package lunatech.infra.persistence.mongo.todo;
 
-import io.quarkus.arc.profile.IfBuildProfile;
-import jakarta.enterprise.inject.Default;
 import jakarta.inject.Singleton;
 import lunatech.domain.todo.Todo;
 import lunatech.domain.todo.TodoRepositoryPort;
