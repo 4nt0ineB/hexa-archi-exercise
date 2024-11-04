@@ -38,18 +38,10 @@ public class MongoTodoRepositoryAdapter implements TodoRepositoryPort {
     }
 
     @Override
-    public Optional<Todo> update(String username, Todo todo) {
-        return TodoEntity.<TodoEntity>find("{'username': ?1, '_id': ?2}", username, todo.id().toString())
-                .stream()
-                .findFirst()
-                .map(todoEntity -> {
-                    todoEntity.title = todo.title();
-                    todoEntity.description = todo.description();
-                    todoEntity.tags = todo.tags() ;
-                    todoEntity.done = todo.done();
-                    todoEntity.update();
-                    return TodoMapper.toDomain(todoEntity);
-                });
+    public Todo update(String username, Todo todo) {
+        var entity = TodoMapper.toEntity(username, todo);
+        entity.persist();
+        return TodoMapper.toDomain(entity);
     }
 
     @Override

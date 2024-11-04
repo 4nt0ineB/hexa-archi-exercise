@@ -35,7 +35,7 @@ public interface TodoServicePort {
      * @param todo the todo to add
      * @return the added todo
      */
-    Todo add(String origin, String target, TodoDTO todo);
+    Todo add(String origin, String target, TodoInput todo);
 
     /**
      * Delete a todo

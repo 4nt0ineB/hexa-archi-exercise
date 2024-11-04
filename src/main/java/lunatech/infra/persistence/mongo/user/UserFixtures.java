@@ -1,18 +1,15 @@
 package lunatech.infra.persistence.mongo.user;
 
-import io.quarkus.runtime.StartupEvent;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
 import lunatech.domain.todo.Todo;
-import lunatech.domain.todo.TodoDTO;
+import lunatech.domain.todo.TodoInput;
 import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.Role;
 import lunatech.domain.user.User;
 import lunatech.domain.user.UserRepositoryPort;
 import lunatech.domain.user.UserServicePort;
-import lunatech.infra.Startup;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -43,7 +40,7 @@ public class UserFixtures {
     public void load() {
         logger.info("Executing user fixtures");
         users.forEach(u -> userService.create(u));
-        var todo = todoService.add("Ewen", "Ewen", new TodoDTO("Run", "", List.of("sport", "health")));
+        var todo = todoService.add("Ewen", "Ewen", new TodoInput("Run", "", List.of("sport", "health")));
         todos.add(todo);
     }
 
