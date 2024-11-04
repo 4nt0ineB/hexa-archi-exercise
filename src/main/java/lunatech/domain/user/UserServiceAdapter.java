@@ -21,7 +21,7 @@ public class UserServiceAdapter implements UserServicePort {
     }
 
     @Override
-    public UserInfo find(String origin, String target) {
+    public UserOutput find(String origin, String target) {
         logAction("Finding user", origin, target);
         var originUser = getUserInfo(origin);
         var targetUser = getUserInfo(target);
@@ -32,19 +32,19 @@ public class UserServiceAdapter implements UserServicePort {
     }
 
     @Override
-    public Either<String, UserInfo> create(User u) {
+    public Either<String, UserOutput> create(User u) {
         logAction("Creating user", u.username(), u.username());
         return userRepository.get(u.username())
-                .map(user -> Either.<String, UserInfo>left("User already exists"))
+                .map(user -> Either.<String, UserOutput>left("User already exists"))
                 .orElse(userRepository.save(u)
-                        .map(user -> Either.<String, UserInfo>right(UserInfo.from(user)))
+                        .map(user -> Either.<String, UserOutput>right(UserOutput.from(user)))
                         .orElse(Either.left("User could not be saved"))
                 );
     }
 
-    private UserInfo getUserInfo(String username) {
+    private UserOutput getUserInfo(String username) {
         return userRepository.get(username)
-                .map(UserInfo::from)
+                .map(UserOutput::from)
                 .orElseThrow(() -> new UnknownUserException(username));
     }
 

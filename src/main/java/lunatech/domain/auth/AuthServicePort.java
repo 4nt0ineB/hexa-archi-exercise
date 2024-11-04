@@ -1,9 +1,9 @@
 package lunatech.domain.auth;
 
-import lunatech.domain.user.UserInfo;
+import lunatech.domain.user.UserOutput;
 
 import java.util.Optional;
 
 public interface AuthServicePort {
-    Optional<UserInfo> authenticate(String username, String password);
+    Optional<UserOutput> authenticate(String username, String password);
 }

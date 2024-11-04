@@ -1,8 +1,9 @@
 package lunatech.domain.auth;
 
-import lunatech.domain.user.UserInfo;
+import lunatech.domain.user.UserOutput;
 import lunatech.domain.user.UserRepositoryPort;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class AuthServiceAdapter implements AuthServicePort {
@@ -13,10 +14,10 @@ public class AuthServiceAdapter implements AuthServicePort {
         this.userRepositoryAdapter = userRepositoryAdapter;
     }
 
-    public Optional<UserInfo> authenticate(String username, String password) {
+    public Optional<UserOutput> authenticate(String username, String password) {
         return userRepositoryAdapter.get(username)
-                .filter(user -> user.password().equals(password))
-                .map(user -> new UserInfo(user.username(), user.role()));
+                .filter(user -> Objects.equals(user.password(),password))
+                .map(UserOutput::from);
     }
 
 }

@@ -3,7 +3,7 @@ package lunatech.domain;
 import io.quarkus.test.junit.QuarkusTest;
 import lunatech.domain.auth.AuthServiceAdapter;
 import lunatech.domain.user.Role;
-import lunatech.domain.user.UserInfo;
+import lunatech.domain.user.UserOutput;
 import lunatech.domain.user.User;
 import lunatech.domain.user.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ public class AuthServiceAdapterTest {
         // When
         var maybeUserInfo = authServiceAdapter.authenticate(username, password);
         // Then
-        assertThat(maybeUserInfo.get(), is(new UserInfo("Antoine", Role.REGULAR)));
+        assertThat(maybeUserInfo.get(), is(new UserOutput("Antoine", Role.REGULAR)));
     }
 
     @Test

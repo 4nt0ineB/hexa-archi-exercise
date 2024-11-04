@@ -33,7 +33,7 @@ class UserServiceAdapterTest {
         // When
         var result = userServiceAdapter.find("Antoine", "Antoine");
         // Then
-        assertThat(result, is(new UserInfo("Antoine", Role.REGULAR)));
+        assertThat(result, is(new UserOutput("Antoine", Role.REGULAR)));
     }
 
     @Test
@@ -46,7 +46,7 @@ class UserServiceAdapterTest {
         // When
        var result = userServiceAdapter.find("Seb", "Antoine");
         // Then
-        assertThat(result, is(new UserInfo("Antoine", Role.REGULAR)));
+        assertThat(result, is(new UserOutput("Antoine", Role.REGULAR)));
     }
 
     @Test

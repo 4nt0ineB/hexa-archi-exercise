@@ -2,9 +2,7 @@ package lunatech.domain.todo;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.media.SchemaProperty;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
         }
         """
 )
-public record TodoDTO(
+public record TodoInput(
         @NotNull
         @NotBlank
         String title,

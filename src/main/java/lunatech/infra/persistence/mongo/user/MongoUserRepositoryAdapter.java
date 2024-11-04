@@ -29,6 +29,6 @@ public class MongoUserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public Long delete(String username) {
-        return UserEntity.<UserEntity>delete("username", username);
+        return UserEntity.delete("username", username);
     }
 }

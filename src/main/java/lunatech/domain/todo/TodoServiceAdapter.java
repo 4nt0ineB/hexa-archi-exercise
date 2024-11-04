@@ -52,20 +52,19 @@ public class TodoServiceAdapter implements TodoServicePort {
         logAction("Updating todo: %s", origin, target, todo);
         validate(todo);
         userService.find(origin, target);
-        return todoRepository.update(target, todo)
-                                .orElseThrow(() -> new UnknownTodoException(todo.id()));
+        return todoRepository.update(target, todo);
     }
 
     @Override
-    public Todo add(String origin, String target, TodoDTO todoDto) {
-        logAction("Adding new todo:", origin, target, todoDto);
-        validate(todoDto);
+    public Todo add(String origin, String target, TodoInput todoInput) {
+        logAction("Adding new todo:", origin, target, todoInput);
+        validate(todoInput);
         userService.find(origin, target);
         var todo = new Todo(
                 UUID.randomUUID(),
-                todoDto.title(),
-                todoDto.description(),
-                todoDto.tags(),
+                todoInput.title(),
+                todoInput.description(),
+                todoInput.tags(),
                 false);
         return todoRepository.add(target, todo);
     }
