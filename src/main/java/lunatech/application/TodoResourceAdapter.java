@@ -96,7 +96,6 @@ public class TodoResourceAdapter {
             @PathParam("id") UUID id
     ) {
         var userTarget = userName.orElse(securityService.userName());
-
         return Response.ok()
                 .entity(todoService.delete(securityService.userName(), userTarget, id))
                 .build();
