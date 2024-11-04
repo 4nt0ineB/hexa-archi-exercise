@@ -4,17 +4,19 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lunatech.domain.todo.Todo;
-import lunatech.domain.todo.TodoDTO;
+import lunatech.domain.todo.TodoInput;
 import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.Role;
 import lunatech.infra.security.SecurityService;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,36 +41,33 @@ public class TodoResourceAdapter {
     }
 
     @GET
-    public Response todos(
+    public List<Todo> todos(
             @QueryParam("tags") Optional<String> tagsFilter,
             @QueryParam("user") Optional<String> userName
     ) {
         var userTarget =  userName.orElse(securityService.userName());
-
-        var todos = tagsFilter
+        return tagsFilter
                 .map(tags -> {
                     var tagList = Arrays.asList(tags.split(","));
                     return todoService.findWithTags(securityService.userName(), userTarget, tagList);
                 })
                 .orElse(todoService.find(securityService.userName(), userTarget));
-        return Response.ok().entity(todos).build();
     }
 
     @GET
     @Path("/{id}")
-    public Response todo(
+    public Todo todo(
             @QueryParam("user") Optional<String> username,
             @PathParam("id") UUID id
     ) {
         var userTarget = username.orElse(securityService.userName());
-        var todo = todoService.findById(securityService.userName(), userTarget, id);
-        return Response.ok(todo).build();
+        return todoService.findById(securityService.userName(), userTarget, id);
     }
 
     @POST
     public Response addTodo(
             @QueryParam("user") Optional<String> userName,
-            TodoDTO todoToAdd
+            @Valid TodoInput todoToAdd
     ) {
         var userTarget = userName.orElse(securityService.userName());
         var todo = todoService.add(securityService.userName(), userTarget, todoToAdd);
@@ -79,25 +78,23 @@ public class TodoResourceAdapter {
     }
 
     @PUT
-    @Path("/")
-    public Response updateTodo(
+    @Path("/{id}")
+    public Todo updateTodo(
             @QueryParam("user") Optional<String> userName,
             Todo todoToUpdate
+
     ) {
         var userTarget = userName.orElse(securityService.userName());
-        var todo = todoService.update(securityService.userName(), userTarget, todoToUpdate);
-        return Response.ok().entity(todo).build();
+        return todoService.update(securityService.userName(), userTarget, todoToUpdate);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response delete(
+    public UUID delete(
             @QueryParam("user") Optional<String> userName,
             @PathParam("id") UUID id
     ) {
         var userTarget = userName.orElse(securityService.userName());
-        return Response.ok()
-                .entity(todoService.delete(securityService.userName(), userTarget, id))
-                .build();
+        return todoService.delete(securityService.userName(), userTarget, id);
     }
 }

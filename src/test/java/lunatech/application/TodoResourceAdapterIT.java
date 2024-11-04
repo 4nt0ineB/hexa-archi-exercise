@@ -53,10 +53,11 @@ public class TodoResourceAdapterIT {
         given()
                 .auth().basic("Nicolas", "pwd")
                 .queryParam("user", "Ewen")
+                .log().all()
                 .when()
                 .get()
-                .peek()
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("size()", equalTo(1));
     }
