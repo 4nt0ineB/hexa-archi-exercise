@@ -3,12 +3,12 @@ package lunatech.infra.persistence.mongo.user;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
+import lunatech.domain.permission.PermissionManager;
 import lunatech.domain.todo.Todo;
 import lunatech.domain.todo.TodoInput;
 import lunatech.domain.todo.TodoServicePort;
 import lunatech.domain.user.Role;
 import lunatech.domain.user.User;
-import lunatech.domain.user.UserRepositoryPort;
 import lunatech.domain.user.UserServicePort;
 import org.jboss.logging.Logger;
 
@@ -27,7 +27,7 @@ public class UserFixtures {
     TodoServicePort todoService;
 
     @Inject
-    UserRepositoryPort userRepository;
+    PermissionManager permissionManager;
 
     List<Todo> todos = new ArrayList<>();
     List<User> users = List.of(
@@ -40,14 +40,22 @@ public class UserFixtures {
     public void load() {
         logger.info("Executing user fixtures");
         users.forEach(u -> userService.create(u));
-        var todo = todoService.add("Ewen", "Ewen", new TodoInput("Run", "", List.of("sport", "health")));
+        var todo = permissionManager.as("Ewen")
+                .access()
+                .todoService((context, service) -> todoService.add(context, new TodoInput("Run", "", List.of("sport", "health"))));
         todos.add(todo);
     }
 
     public void clear() {
         logger.info("Clearing user fixtures");
-        todoService.delete("Ewen", "Ewen", todos.get(0).id());
+        permissionManager.as("Ewen")
+                .access()
+                .todoService((context, service) -> service.delete(context, todos.get(0).id()));
         todos.clear();
-        users.forEach(u -> userRepository.delete(u.username()));
+        var context = permissionManager.as("Nicolas");
+        for (var user : users) {
+            context.impersonate(user.username());
+            context.access().userService((c, service) -> service.delete(c));
+        }
     }
 }

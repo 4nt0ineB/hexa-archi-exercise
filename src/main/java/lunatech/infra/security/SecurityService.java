@@ -14,4 +14,8 @@ public class SecurityService {
         return identity.getPrincipal().getName();
     }
 
+    public Context context() {
+        return identity.getAttribute("context");
+    }
+
 }

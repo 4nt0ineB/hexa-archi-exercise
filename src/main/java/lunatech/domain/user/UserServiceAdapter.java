@@ -1,39 +1,28 @@
 package lunatech.domain.user;
 
 import io.vavr.control.Either;
-import lunatech.domain.permission.ForbiddenActionException;
-import lunatech.domain.permission.PermissionManager;
+import lunatech.domain.permission.Context;
 import org.jboss.logging.Logger;
 
 public class UserServiceAdapter implements UserServicePort {
 
     private static final Logger logger = Logger.getLogger(UserServiceAdapter.class);
-
-    private final PermissionManager permissionManager;
     private final UserRepositoryPort userRepository;
 
-    public UserServiceAdapter(
-            UserRepositoryPort userRepository,
-            PermissionManager permissionManager)
+    public UserServiceAdapter(UserRepositoryPort userRepository)
     {
         this.userRepository = userRepository;
-        this.permissionManager = permissionManager;
     }
 
     @Override
-    public UserOutput find(String origin, String target) {
-        logAction("Finding user", origin, target);
-        var originUser = getUserInfo(origin);
-        var targetUser = getUserInfo(target);
-        if(!permissionManager.hasRightsOver(originUser, targetUser)) {
-            throw new ForbiddenActionException("");
-        }
-        return targetUser;
+    public UserOutput find(Context context) {
+        logAction("Finding user", context);
+        return UserOutput.from(context.target());
     }
 
     @Override
     public Either<String, UserOutput> create(User u) {
-        logAction("Creating user", u.username(), u.username());
+        logger.infof("Creating user %s", u.username());
         return userRepository.get(u.username())
                 .map(user -> Either.<String, UserOutput>left("User already exists"))
                 .orElse(userRepository.save(u)
@@ -42,15 +31,16 @@ public class UserServiceAdapter implements UserServicePort {
                 );
     }
 
-    private UserOutput getUserInfo(String username) {
-        return userRepository.get(username)
-                .map(UserOutput::from)
-                .orElseThrow(() -> new UnknownUserException(username));
+    @Override
+    public User delete(Context context) {
+        logAction("Deleting user", context);
+        userRepository.delete(context.target().username());
+        return context.target();
     }
 
-    private void logAction(String msg, String origin, String target, Object... args) {
-        var prefix = "(%s" + (origin.equals(target) ? "" : " as %s") + ") ";
-        logger.infof(prefix + msg, origin, target, args);
+    private void logAction(String msg, Context context, Object... args) {
+        var prefix = "(%s" + (context.isImpersonating() ? "" : " as %s") + ") ";
+        logger.infof(prefix + msg, context.origin(), context.target(), args);
     }
 }
 

@@ -1,13 +1,101 @@
 package lunatech.domain.permission;
 
-import lunatech.domain.user.Role;
-import lunatech.domain.user.UserOutput;
+import jakarta.ws.rs.ForbiddenException;
+import lunatech.domain.todo.TodoServicePort;
+import lunatech.domain.user.*;
+
+import java.util.Objects;
 
 public class PermissionManager {
 
-    public boolean hasRightsOver(UserOutput origin, UserOutput target) {
-        return origin.username().equals(target.username())
-                || origin.role().equals(Role.ADMIN);
+    private final UserRepositoryPort userRepository;
+    private final TodoServicePort todoService;
+    private final UserServicePort userService;
+
+    public PermissionManager(UserRepositoryPort userRepository, TodoServicePort todoService, UserServicePort userService) {
+        this.userRepository = userRepository;
+        this.todoService = todoService;
+        this.userService = userService;
     }
 
+    /**
+     * Allows to perform action on specific services
+     */
+    public class SafeConduct {
+
+        private final Context context;
+
+        private SafeConduct(Context context) {
+            this.context = context;
+        }
+
+        public <T> T todoService (AuthorizedActionOnTodoService<T> action) {
+            return action.apply(context, todoService);
+        }
+
+        public <T> T userService (AuthorizedActionOnUserService<T> action) {
+            return action.apply(context, userService);
+        }
+
+    }
+
+    public class ContextBuilder {
+
+        private final User originOfRequest;
+        private User requestedUser;
+
+        private ContextBuilder(User originOfRequest) {
+            this.originOfRequest = originOfRequest;
+            this.requestedUser = originOfRequest;
+        }
+
+        public ContextBuilder impersonate(String username) {
+            if(Objects.equals(originOfRequest.username(), username)) {
+                requestedUser = originOfRequest;
+                return this;
+            }
+            requestedUser = findUser(username);
+            return this;
+        }
+
+        /**
+         * Provides a safe conduct with a permitted context
+         */
+        public SafeConduct access() {
+            return new SafeConduct(checkPermission(originOfRequest, requestedUser));
+        }
+    }
+
+    /**
+     * Start building a context with the given user
+     */
+    public ContextBuilder as(String username) {
+        var originOfRequest = findUser(username);
+        return new ContextBuilder(originOfRequest);
+    }
+
+    /**
+     * Check if the given context is permitted by the business rules
+     * @throws ForbiddenException if is the context is not permitted
+     */
+    private Context checkPermission(User originOfRequest, User requestedUser) {
+        if(hasRightsOver(originOfRequest, requestedUser)) {
+            return new Context(originOfRequest, requestedUser);
+        }
+        throw new ForbiddenException();
+    }
+
+    /**
+     * See a user is a restricted operation that must
+     * be done by the permission manager
+     */
+    private User findUser(String username) {
+        return userRepository.get(username)
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+    }
+
+    public boolean hasRightsOver(User origin, User target) {
+        return origin.username().equals(target.username())
+                || (origin.role().equals(Role.ADMIN) && !target.role().equals(Role.ADMIN)); // Admins can't usurp other admins
+    }
 }

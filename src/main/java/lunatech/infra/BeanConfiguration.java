@@ -29,23 +29,25 @@ public class BeanConfiguration {
     PermissionManager permissionManager;
     @Inject
     UserServicePort userService;
+    @Inject
+    TodoServicePort todoService;
 
     @Produces
     @ApplicationScoped
     public PermissionManager permissionManager() {
-        return new PermissionManager();
+        return new PermissionManager(userRepository, todoService, userService);
     }
 
     @Produces
     @ApplicationScoped
     public UserServicePort orderService() {
-        return new UserServiceAdapter(userRepository, permissionManager);
+        return new UserServiceAdapter(userRepository);
     }
 
     @Produces
     @ApplicationScoped
     public TodoServicePort todoService() {
-        return new TodoServiceAdapter(todoRepository, userService, validator);
+        return new TodoServiceAdapter(todoRepository, validator);
     }
 
     @Produces

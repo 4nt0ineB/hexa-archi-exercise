@@ -2,86 +2,82 @@ package lunatech.domain.todo;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import lunatech.domain.permission.Context;
 import lunatech.domain.user.UserServicePort;
 import org.jboss.logging.Logger;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class TodoServiceAdapter implements TodoServicePort {
 
     private static final Logger logger = Logger.getLogger(TodoServiceAdapter.class);
     private final Validator validator;
     private final TodoRepositoryPort todoRepository;
-    private final UserServicePort userService;
 
     private final Set<UUID> deletedTodos = new HashSet<>();
 
     public TodoServiceAdapter(
             TodoRepositoryPort todoRepository,
-            UserServicePort userService,
             Validator validator
             ) {
         this.validator = validator;
         this.todoRepository = todoRepository;
-        this.userService = userService;
     }
 
     @Override
-    public List<Todo> find(String origin, String target) {
-        logAction("Finding all todos", target, origin);
-         userService.find(origin, target);
-         return todoRepository.find(target);
+    public List<Todo> find(Context context) {
+        logAction("Finding all todos", context);
+         return todoRepository.find(context.target().username());
     }
 
     @Override
-    public List<Todo> findWithTags(String origin, String target, List<String> tags) {
-        logAction("Finding todos with tags %s", target, origin, tags);
-        userService.find(origin, target);
-        return todoRepository.findWithTags(target, tags);
+    public List<Todo> findWithTags(Context context, List<String> tags) {
+        logAction("Finding todos with tags %s", context, tags);
+        return todoRepository.findWithTags(context.target().username(), tags);
     }
 
     @Override
-    public Todo findById(String origin, String target, UUID id) {
-        logAction("Finding todo ID: %s", origin, target, id);
-        userService.find(origin, target);
-        return todoRepository.findById(target, id)
+    public Todo findById(Context context, UUID id) {
+        logAction("Finding todo ID: %s", context, id);
+        return todoRepository.findById(context.target().username(), id)
                 .orElseThrow(() -> new UnknownTodoException(id));
     }
 
     @Override
-    public Todo update(String origin, String target, Todo todo) {
-        logAction("Updating todo: %s", origin, target, todo);
+    public Todo update(Context context, Todo todo) {
+        logAction("Updating todo: %s", context, todo);
         validate(todo);
-        userService.find(origin, target);
-        return todoRepository.update(target, todo);
+        return todoRepository.update(context.target().username(), todo);
     }
 
     @Override
-    public Todo add(String origin, String target, TodoInput todoInput) {
-        logAction("Adding new todo:", origin, target, todoInput);
+    public Todo add(Context context, TodoInput todoInput) {
+        logAction("Adding new todo:", context, todoInput);
         validate(todoInput);
-        userService.find(origin, target);
         var todo = new Todo(
                 UUID.randomUUID(),
                 todoInput.title(),
                 todoInput.description(),
                 todoInput.tags(),
                 false);
-        return todoRepository.add(target, todo);
+        return todoRepository.add(context.target().username(), todo);
     }
 
     @Override
-    public UUID delete(String origin, String target, UUID id) {
-        logAction("Deleting todo ID: %s", origin, target, id);
-        if(deletedTodos.contains(id)) { // idempotent
+    public UUID delete(Context context, UUID id) {
+        logAction("Deleting todo ID: %s", context, id);
+        if(deletedTodos.contains(id)) { // idempotence
             return id;
         }
-        userService.find(origin, target);
-        var maybeDeletedId = todoRepository.delete(target, id);
+        var maybeDeletedId = todoRepository.delete(context.target().username(), id);
         if(maybeDeletedId.isPresent()) {
             deletedTodos.add(id);
         }
-        return maybeDeletedId.orElseThrow(() -> new UnknownTodoException(id)); // never ever existed
+        return maybeDeletedId
+                .orElseThrow(() -> new UnknownTodoException(id)); // it never existed
     }
 
     private <T> void validate(T todo) {
@@ -93,8 +89,8 @@ public class TodoServiceAdapter implements TodoServicePort {
         }
     }
 
-    private void logAction(String msg, String origin, String target, Object... args) {
-        var prefix = "(%s" + (origin.equals(target) ? "" : " as %s") + ") ";
-        logger.infof(prefix + msg, origin, target, args);
+    private void logAction(String msg, Context context, Object... args) {
+        var prefix = "(%s" + (context.isImpersonating() ? "" : " as %s") + ") ";
+        logger.infof(prefix + msg, context.origin(), context.target(), args);
     }
 }

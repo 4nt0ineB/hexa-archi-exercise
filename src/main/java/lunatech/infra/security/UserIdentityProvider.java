@@ -1,7 +1,6 @@
 package lunatech.infra.security;
 
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import io.quarkus.security.AuthenticationFailedException;
@@ -12,7 +11,6 @@ import io.quarkus.security.identity.request.UsernamePasswordAuthenticationReques
 import io.quarkus.security.runtime.QuarkusPrincipal;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.smallrye.mutiny.Uni;
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lunatech.domain.auth.AuthServicePort;
