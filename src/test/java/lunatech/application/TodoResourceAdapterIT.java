@@ -8,9 +8,9 @@ import jakarta.ws.rs.core.MediaType;
 import lunatech.TestProfile;
 import lunatech.domain.user.Role;
 import lunatech.infra.persistence.UserFixtures;
-import org.junit.jupiter.api.*;
-
-import java.util.Random;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
