@@ -35,7 +35,7 @@ public class BeanConfiguration {
     @Produces
     @ApplicationScoped
     public PermissionManager permissionManager() {
-        return new PermissionManager(userRepository, todoService, userService);
+        return new PermissionManager(userRepository);
     }
 
     @Produces

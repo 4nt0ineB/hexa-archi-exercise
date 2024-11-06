@@ -10,7 +10,7 @@ public class PermissionManager {
 
     private final UserRepositoryPort userRepository;
 
-    public PermissionManager(UserRepositoryPort userRepository, TodoServicePort todoService, UserServicePort userService) {
+    public PermissionManager(UserRepositoryPort userRepository) {
         this.userRepository = userRepository;
     }
 

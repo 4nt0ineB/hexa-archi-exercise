@@ -2,14 +2,14 @@ package lunatech.domain;
 
 import lunatech.domain.permission.ForbiddenActionException;
 import lunatech.domain.permission.PermissionManager;
-import lunatech.domain.user.*;
+import lunatech.domain.user.Role;
+import lunatech.domain.user.User;
+import lunatech.domain.user.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,7 +22,7 @@ class PermissionManagerTest {
    @BeforeEach
     void setup() {
         userRepository = mock(UserRepositoryPort.class);
-        permissionManager = new PermissionManager(userRepository, null, null);
+        permissionManager = new PermissionManager(userRepository);
     }
 
     @Test
