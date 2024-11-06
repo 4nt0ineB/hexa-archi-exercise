@@ -9,34 +9,9 @@ import java.util.Objects;
 public class PermissionManager {
 
     private final UserRepositoryPort userRepository;
-    private final TodoServicePort todoService;
-    private final UserServicePort userService;
 
     public PermissionManager(UserRepositoryPort userRepository, TodoServicePort todoService, UserServicePort userService) {
         this.userRepository = userRepository;
-        this.todoService = todoService;
-        this.userService = userService;
-    }
-
-    /**
-     * Allows to perform action on specific services
-     */
-    public class SafeConduct {
-
-        private final Context context;
-
-        private SafeConduct(Context context) {
-            this.context = context;
-        }
-
-        public <T> T todoService (AuthorizedActionOnTodoService<T> action) {
-            return action.apply(context, todoService);
-        }
-
-        public <T> T userService (AuthorizedActionOnUserService<T> action) {
-            return action.apply(context, userService);
-        }
-
     }
 
     public class ContextBuilder {
@@ -61,8 +36,8 @@ public class PermissionManager {
         /**
          * Provides a safe conduct with a permitted context
          */
-        public SafeConduct access() {
-            return new SafeConduct(checkPermission(originOfRequest, requestedUser));
+        public Context getAccess() {
+            return checkPermission(originOfRequest, requestedUser);
         }
     }
 

@@ -3,7 +3,6 @@ package lunatech.domain.todo;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lunatech.domain.permission.Context;
-import lunatech.domain.user.UserServicePort;
 import org.jboss.logging.Logger;
 
 import java.util.HashSet;

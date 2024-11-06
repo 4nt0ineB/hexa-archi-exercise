@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lunatech.domain.permission.Context;
 import lunatech.domain.permission.PermissionManager;
 import lunatech.domain.todo.Todo;
 import lunatech.domain.todo.TodoInput;
@@ -33,12 +34,13 @@ public class TodoResourceAdapter {
 
     @Inject SecurityService securityService;
     MeterRegistry metrics = Metrics.globalRegistry;
-
+    private final TodoServicePort todoService;
     private final PermissionManager permissionManager;
 
     @Inject
     public TodoResourceAdapter(TodoServicePort todoService, PermissionManager permissionManager) {
         this.permissionManager = permissionManager;
+        this.todoService = todoService;
     }
 
     @GET
@@ -46,12 +48,13 @@ public class TodoResourceAdapter {
             @QueryParam("tags") Optional<String> tagsFilter,
             @QueryParam("user") Optional<String> userName
     ) {
+        var context = accessFor(userName);
         return tagsFilter
                 .map(tags -> {
                     var tagList = Arrays.asList(tags.split(","));
-                    return access(userName).todoService((context, service) -> service.findWithTags(context, tagList));
+                    return todoService.findWithTags(context, tagList);
                 })
-                .orElse(access(userName).todoService((context, service) -> service.find(context)));
+                .orElse(todoService.find(context));
     }
 
     @GET
@@ -60,7 +63,7 @@ public class TodoResourceAdapter {
             @QueryParam("user") Optional<String> username,
             @PathParam("id") UUID id
     ) {
-        return access(username).todoService((context, service) -> service.findById(context, id));
+        return todoService.findById(accessFor(username), id);
     }
 
 
@@ -69,7 +72,7 @@ public class TodoResourceAdapter {
             @QueryParam("user") Optional<String> userName,
             @Valid TodoInput todoToAdd
     ) {
-        var todo = access(userName).todoService((context, service) -> service.add(context, todoToAdd));
+        var todo = todoService.add(accessFor(userName), todoToAdd);
         metrics.counter("todos.created").increment();
         return Response.created(URI.create(String.format("/api/todos/%s", todo.id())))
                 .entity(todo)
@@ -83,8 +86,7 @@ public class TodoResourceAdapter {
             Todo todoToUpdate
 
     ) {
-        return access(userName)
-                .todoService((context, service) -> service.update(context, todoToUpdate));
+        return todoService.update(accessFor(userName), todoToUpdate);
     }
 
     @DELETE
@@ -93,16 +95,16 @@ public class TodoResourceAdapter {
             @QueryParam("user") Optional<String> userName,
             @PathParam("id") UUID id
     ) {
-        access(userName).todoService((context, service) -> service.delete(context, id));
+        todoService.delete(accessFor(userName), id);
         return Response.noContent().build();
     }
 
-    private PermissionManager.SafeConduct access(Optional<String> username) {
+    private Context accessFor(Optional<String> username) {
         var userTarget = username.orElse(securityService.userName());
         return permissionManager
                 .as(securityService.userName())
                 .impersonate(userTarget)
-                .access();
+                .getAccess();
     }
 
 }

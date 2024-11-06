@@ -40,22 +40,20 @@ public class UserFixtures {
     public void load() {
         logger.info("Executing user fixtures");
         users.forEach(u -> userService.create(u));
-        var todo = permissionManager.as("Ewen")
-                .access()
-                .todoService((context, service) -> todoService.add(context, new TodoInput("Run", "", List.of("sport", "health"))));
+        var context = permissionManager.as("Ewen").getAccess();
+        var todo = todoService.add(context, new TodoInput("Run", "", List.of("sport", "health")));
         todos.add(todo);
     }
 
     public void clear() {
         logger.info("Clearing user fixtures");
-        permissionManager.as("Ewen")
-                .access()
-                .todoService((context, service) -> service.delete(context, todos.get(0).id()));
+        var context = permissionManager.as("Ewen").getAccess();
+        todoService.delete(context, todos.get(0).id());
         todos.clear();
-        var context = permissionManager.as("Nicolas");
+        var contextBuilder = permissionManager.as("Nicolas");
         for (var user : users) {
-            context.impersonate(user.username());
-            context.access().userService((c, service) -> service.delete(c));
+            contextBuilder.impersonate(user.username());
+            userService.delete(contextBuilder.getAccess());
         }
     }
 }
