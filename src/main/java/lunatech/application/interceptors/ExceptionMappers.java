@@ -1,4 +1,4 @@
-package lunatech.application;
+package lunatech.application.interceptors;
 
 import jakarta.ws.rs.core.Response;
 import lunatech.domain.permission.ForbiddenActionException;
