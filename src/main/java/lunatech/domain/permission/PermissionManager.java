@@ -1,8 +1,9 @@
 package lunatech.domain.permission;
 
 import jakarta.ws.rs.ForbiddenException;
-import lunatech.domain.todo.TodoServicePort;
-import lunatech.domain.user.*;
+import lunatech.domain.user.Role;
+import lunatech.domain.user.User;
+import lunatech.domain.user.UserRepositoryPort;
 
 import java.util.Objects;
 

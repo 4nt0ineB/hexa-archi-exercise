@@ -31,7 +31,7 @@ class PermissionManagerTest {
         User originUser = new User("Antoine", "pwd", Role.REGULAR);
         when(userRepository.get("Antoine")).thenReturn(Optional.of(originUser));
         // When
-        var result = permissionManager.as(originUser.username())
+        permissionManager.as(originUser.username())
                 // then
                 .getAccess(); // ok
     }
@@ -48,7 +48,7 @@ class PermissionManagerTest {
                 .as(originUser.username())
                 .impersonate(targetUser.username());
         // Then
-        assertThrows(ForbiddenActionException.class, () -> context.getAccess());
+        assertThrows(ForbiddenActionException.class, context::getAccess);
     }
 
     @Test
