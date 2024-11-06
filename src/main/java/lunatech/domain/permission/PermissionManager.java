@@ -35,6 +35,7 @@ public class PermissionManager {
 
         /**
          * Provides a safe conduct with a permitted context
+         * @throws ForbiddenException if the context is not permitted
          */
         public Context getAccess() {
             return checkPermission(originOfRequest, requestedUser);
