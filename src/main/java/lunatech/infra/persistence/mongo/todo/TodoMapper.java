@@ -12,6 +12,7 @@ public class TodoMapper {
         todoEntity.username = username;
         todoEntity.title = todo.title();
         todoEntity.description = todo.description();
+        todoEntity.tags = todo.tags();
         todoEntity.done = todo.done();
         return todoEntity;
     }

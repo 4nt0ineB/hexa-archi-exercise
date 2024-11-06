@@ -9,4 +9,12 @@ public record Todo(
         String description,
         List<String> tags,
         boolean done) {
+
+    public Todo {
+        tags = List.copyOf(tags);
+    }
+
+    public static Todo from(TodoInput input) {
+        return new Todo(UUID.randomUUID(), input.title(), input.description(), input.tags(), false);
+    }
 }

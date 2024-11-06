@@ -39,7 +39,7 @@ public class MongoTodoRepositoryAdapter implements TodoRepositoryPort {
     public Todo upsert(String username, Todo todo) {
         var entity = TodoMapper.toEntity(username, todo);
         entity.persistOrUpdate();
-        return TodoMapper.toDomain(entity);
+        return todo;
     }
 
     @Override
