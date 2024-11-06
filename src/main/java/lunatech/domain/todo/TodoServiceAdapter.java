@@ -3,6 +3,7 @@ package lunatech.domain.todo;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lunatech.domain.permission.Context;
+import lunatech.domain.permission.ForbiddenActionException;
 import org.jboss.logging.Logger;
 
 import java.util.HashSet;
@@ -49,7 +50,10 @@ public class TodoServiceAdapter implements TodoServicePort {
     public Todo update(Context context, Todo todo) {
         logAction("Updating todo: %s", context, todo);
         validate(todo);
-        return todoRepository.update(context.target().username(), todo);
+        todoRepository.findById(context.target().username(), todo.id())
+                .map(__ -> todoRepository.upsert(context.target().username(), todo))
+                .orElseThrow(() -> new ForbiddenActionException(""));
+        return todo;
     }
 
     @Override
@@ -62,7 +66,7 @@ public class TodoServiceAdapter implements TodoServicePort {
                 todoInput.description(),
                 todoInput.tags(),
                 false);
-        return todoRepository.add(context.target().username(), todo);
+        return todoRepository.upsert(context.target().username(), todo);
     }
 
     @Override

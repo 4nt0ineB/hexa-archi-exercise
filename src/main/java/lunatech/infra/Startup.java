@@ -5,7 +5,7 @@ import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import lunatech.infra.persistence.mongo.user.UserFixtures;
+import lunatech.infra.persistence.UserFixtures;
 
 
 /**

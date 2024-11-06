@@ -80,11 +80,10 @@ public class TodoResourceAdapter {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/")
     public Todo updateTodo(
             @QueryParam("user") Optional<String> userName,
             Todo todoToUpdate
-
     ) {
         return todoService.update(accessFor(userName), todoToUpdate);
     }

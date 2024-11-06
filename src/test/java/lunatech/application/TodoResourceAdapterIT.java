@@ -5,7 +5,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import lunatech.TestProfile;
-import lunatech.infra.persistence.mongo.user.UserFixtures;
+import lunatech.infra.persistence.UserFixtures;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;

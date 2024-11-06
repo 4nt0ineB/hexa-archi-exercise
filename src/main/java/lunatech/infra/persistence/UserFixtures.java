@@ -1,4 +1,4 @@
-package lunatech.infra.persistence.mongo.user;
+package lunatech.infra.persistence;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
