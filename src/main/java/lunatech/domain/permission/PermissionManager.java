@@ -35,7 +35,7 @@ public class PermissionManager {
 
         /**
          * Provides a safe conduct with a permitted context
-         * @throws ForbiddenException if the context is not permitted
+         * @throws ForbiddenActionException if the context is not permitted
          */
         public Context getAccess() {
             return checkPermission(originOfRequest, requestedUser);
@@ -52,13 +52,13 @@ public class PermissionManager {
 
     /**
      * Check if the given context is permitted by the business rules
-     * @throws ForbiddenException if is the context is not permitted
+     * @throws ForbiddenActionException if is the context is not permitted
      */
     private Context checkPermission(User originOfRequest, User requestedUser) {
         if(hasRightsOver(originOfRequest, requestedUser)) {
             return new Context(originOfRequest, requestedUser);
         }
-        throw new ForbiddenException();
+        throw new ForbiddenActionException("");
     }
 
     /**
