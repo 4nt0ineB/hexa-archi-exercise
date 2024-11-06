@@ -1,4 +1,4 @@
-package lunatech.application;
+package lunatech.application.interceptors;
 
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
@@ -11,9 +11,14 @@ import lunatech.infra.security.SecurityService;
 
 import java.util.Optional;
 
+// https://docs.redhat.com/en/documentation/red_hat_fuse/7.4/html/apache_cxf_development_guide/jaxrs20filters#JAXRS20Filters-ServerRequestFilter
 @Provider
 @Priority(1)
-// https://docs.redhat.com/en/documentation/red_hat_fuse/7.4/html/apache_cxf_development_guide/jaxrs20filters#JAXRS20Filters-ServerRequestFilter
+/**
+ * This filter is responsible to create the domain-context of the request.
+ * This take place after the authentication and before the resource is called.
+ * When the context is build (thus validated by the perm manager) it is stored in the request context.
+ */
 public class ContextAccess implements ContainerRequestFilter {
 
     @Inject
@@ -32,6 +37,7 @@ public class ContextAccess implements ContainerRequestFilter {
         return permissionManager
                 .as(securityService.userName())
                 .impersonate(userTarget)
+                // check permissions and returns the context
                 .getAccess();
     }
 }
