@@ -41,7 +41,8 @@ public class UserFixtures {
         logger.info("Executing user fixtures");
         users.forEach(u -> userService.create(u));
         var context = permissionManager.as("Ewen").getAccess();
-        var todo = todoService.add(context, new TodoInput("Run", "", List.of("sport", "health")));
+        var todoInput = new TodoInput("Run", "", List.of("sport", "health"));
+        var todo = todoService.add(context, todoInput);
         todos.add(todo);
     }
 

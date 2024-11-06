@@ -48,7 +48,7 @@ class PermissionManagerTest {
                 .as(originUser.username())
                 .impersonate(targetUser.username());
         // Then
-        assertThrows(ForbiddenActionException.class, context::getAccess);
+        assertThrows(ForbiddenActionException.class, () -> context.getAccess());
     }
 
     @Test

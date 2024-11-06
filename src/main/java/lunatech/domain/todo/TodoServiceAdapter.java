@@ -29,7 +29,7 @@ public class TodoServiceAdapter implements TodoServicePort {
 
     @Override
     public List<Todo> find(Context context) {
-        logAction("Finding all todos", context);
+         logAction("Finding all todos", context);
          return todoRepository.find(context.target().username());
     }
 
@@ -58,14 +58,9 @@ public class TodoServiceAdapter implements TodoServicePort {
 
     @Override
     public Todo add(Context context, TodoInput todoInput) {
-        logAction("Adding new todo:", context, todoInput);
         validate(todoInput);
-        var todo = new Todo(
-                UUID.randomUUID(),
-                todoInput.title(),
-                todoInput.description(),
-                todoInput.tags(),
-                false);
+        var todo = Todo.from(todoInput);
+        logAction("Adding new todo:", context, todo);
         return todoRepository.upsert(context.target().username(), todo);
     }
 
