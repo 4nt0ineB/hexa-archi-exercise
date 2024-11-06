@@ -2,6 +2,7 @@ package lunatech.application;
 
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import lunatech.TestProfile;
@@ -39,9 +40,9 @@ public class TodoResourceAdapterIT {
     }
 
     @Test
+    @TestSecurity(user = "Ewen")
     public void testGetTodosForbidden() {
         given()
-                .auth().basic("Ewen", "pwd")
                 .queryParam("user", "Sebastien")
         .when()
                 .get()
@@ -49,9 +50,9 @@ public class TodoResourceAdapterIT {
                 .statusCode(403);
     }
     @Test
+    @TestSecurity(user = "Nicolas")
     public void testGetTodosAuthorized() {
         given()
-                .auth().basic("Nicolas", "pwd")
                 .queryParam("user", "Ewen")
                 .log().all()
                 .when()
@@ -63,9 +64,9 @@ public class TodoResourceAdapterIT {
     }
 
     @Test
+    @TestSecurity(user = "Ewen")
     public void testAddTodoAuthorized() {
         given()
-                .auth().basic("Ewen", "pwd")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("""
                 {
