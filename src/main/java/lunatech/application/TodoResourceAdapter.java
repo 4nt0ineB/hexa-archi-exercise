@@ -95,7 +95,7 @@ public class TodoResourceAdapter {
         todoService.delete(getContext(), id);
         return Response.noContent().build();
     }
-
+    
     public Context getContext() {
         return (Context) requestContext.getProperty("context");
     }
